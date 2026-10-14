@@ -101,7 +101,6 @@ class ManagerMapScreen extends StatelessWidget {
                                   statusColor: AppTheme.error,
                                   location: 'Hortifrúti • Maçãs',
                                   time: 'Parado há 18 min',
-                                  battery: 'Bateria em 84%',
                                 ),
                               ),
                               // 2. Ponto Amarelo com Avaria (Superior Direito)
@@ -131,7 +130,6 @@ class ManagerMapScreen extends StatelessWidget {
                                   statusColor: AppTheme.error,
                                   location: 'Hortifrúti • Balcão',
                                   time: 'Parado há 9 min',
-                                  battery: 'Bateria em 95%',
                                 ),
                               ),
                               // 4. Ponto Vermelho (Inferior Esquerdo)
@@ -146,7 +144,6 @@ class ManagerMapScreen extends StatelessWidget {
                                   statusColor: AppTheme.error,
                                   location: 'Hortifrúti • Verduras',
                                   time: 'Parado há 27 min',
-                                  battery: 'Bateria em 61%',
                                 ),
                               ),
                               // 5. Ponto Vermelho (Inferior Direito)
@@ -161,7 +158,6 @@ class ManagerMapScreen extends StatelessWidget {
                                   statusColor: AppTheme.error,
                                   location: 'Hortifrúti • Saída',
                                   time: 'Parado há 12 min',
-                                  battery: 'Bateria em 88%',
                                 ),
                               ),
                             ],
@@ -234,7 +230,6 @@ class _MapCartMarker extends StatelessWidget {
   final String location;
   final String time;
   final String? defect;
-  final String? battery;
 
   const _MapCartMarker({
     required this.dotColor,
@@ -245,7 +240,6 @@ class _MapCartMarker extends StatelessWidget {
     required this.location,
     required this.time,
     this.defect,
-    this.battery,
   });
 
   @override
@@ -321,10 +315,10 @@ class _MapCartMarker extends StatelessWidget {
               const SizedBox(height: 4),
               _row(Icons.timer_outlined, time, const Color(0xFF94A3B8)),
               const SizedBox(height: 4),
-              if (defect != null)
-                _row(Icons.warning_amber_rounded, defect!, AppTheme.warning)
-              else if (battery != null)
-                _row(Icons.battery_charging_full_rounded, battery!, AppTheme.success),
+              if (defect != null && defect!.isNotEmpty)
+                _row(Icons.warning_amber_rounded, 'Com avaria: $defect', AppTheme.warning)
+              else
+                _row(Icons.check_circle_outline, 'Sem avarias', AppTheme.success),
               const SizedBox(height: 8),
               Row(
                 children: [
