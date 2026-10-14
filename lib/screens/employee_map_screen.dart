@@ -91,33 +91,78 @@ class EmployeeMapScreen extends StatelessWidget {
                               ),
                               // 1. Ponto Vermelho (Superior Esquerdo)
                               Positioned(
-                                left: w * 0.12 - 9,
-                                top: h * 0.065 - 9,
-                                child: const _MapDot(color: AppTheme.error),
+                                left: w * 0.12 - 16,
+                                top: h * 0.065 - 16,
+                                child: const _MapCartMarker(
+                                  dotColor: AppTheme.error,
+                                  title: 'Carrinho #12',
+                                  code: 'CR012',
+                                  status: 'Fora da Estação',
+                                  statusColor: AppTheme.error,
+                                  location: 'Hortifrúti • Maçãs',
+                                  time: 'Parado há 18 min',
+                                  battery: 'Bateria em 84%',
+                                ),
                               ),
                               // 2. Ponto Amarelo com Avaria (Superior Direito)
                               Positioned(
-                                left: w * 0.81 - 9,
-                                top: h * 0.145 - 9,
-                                child: const _MapDot(color: AppTheme.warning),
+                                left: w * 0.81 - 16,
+                                top: h * 0.145 - 16,
+                                child: const _MapCartMarker(
+                                  dotColor: AppTheme.warning,
+                                  title: 'Carrinho #07',
+                                  code: 'CR007',
+                                  status: 'Avaria Relatada',
+                                  statusColor: AppTheme.warning,
+                                  location: 'Hortifrúti • Temperos',
+                                  time: 'Parado há 34 min',
+                                  defect: 'Roda dianteira travada',
+                                ),
                               ),
                               // 3. Ponto Vermelho (Centro Direito)
                               Positioned(
-                                left: w * 0.745 - 9,
-                                top: h * 0.485 - 9,
-                                child: const _MapDot(color: AppTheme.error),
+                                left: w * 0.745 - 16,
+                                top: h * 0.485 - 16,
+                                child: const _MapCartMarker(
+                                  dotColor: AppTheme.error,
+                                  title: 'Carrinho #19',
+                                  code: 'CR019',
+                                  status: 'Fora da Estação',
+                                  statusColor: AppTheme.error,
+                                  location: 'Hortifrúti • Balcão',
+                                  time: 'Parado há 9 min',
+                                  battery: 'Bateria em 95%',
+                                ),
                               ),
                               // 4. Ponto Vermelho (Inferior Esquerdo)
                               Positioned(
-                                left: w * 0.26 - 9,
-                                top: h * 0.705 - 9,
-                                child: const _MapDot(color: AppTheme.error),
+                                left: w * 0.26 - 16,
+                                top: h * 0.705 - 16,
+                                child: const _MapCartMarker(
+                                  dotColor: AppTheme.error,
+                                  title: 'Carrinho #25',
+                                  code: 'CR025',
+                                  status: 'Fora da Estação',
+                                  statusColor: AppTheme.error,
+                                  location: 'Hortifrúti • Verduras',
+                                  time: 'Parado há 27 min',
+                                  battery: 'Bateria em 61%',
+                                ),
                               ),
                               // 5. Ponto Vermelho (Inferior Direito)
                               Positioned(
-                                left: w * 0.835 - 9,
-                                top: h * 0.92 - 9,
-                                child: const _MapDot(color: AppTheme.error),
+                                left: w * 0.835 - 16,
+                                top: h * 0.92 - 16,
+                                child: const _MapCartMarker(
+                                  dotColor: AppTheme.error,
+                                  title: 'Carrinho #31',
+                                  code: 'CR031',
+                                  status: 'Fora da Estação',
+                                  statusColor: AppTheme.error,
+                                  location: 'Hortifrúti • Saída',
+                                  time: 'Parado há 12 min',
+                                  battery: 'Bateria em 88%',
+                                ),
                               ),
                             ],
                           );
@@ -237,6 +282,159 @@ class EmployeeMapScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _MapCartMarker extends StatelessWidget {
+  final Color dotColor;
+  final String title;
+  final String code;
+  final String status;
+  final Color statusColor;
+  final String location;
+  final String time;
+  final String? defect;
+  final String? battery;
+
+  const _MapCartMarker({
+    required this.dotColor,
+    required this.title,
+    required this.code,
+    required this.status,
+    required this.statusColor,
+    required this.location,
+    required this.time,
+    this.defect,
+    this.battery,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      waitDuration: const Duration(milliseconds: 50),
+      showDuration: const Duration(seconds: 4),
+      triggerMode: TooltipTriggerMode.tap,
+      verticalOffset: 16,
+      padding: EdgeInsets.zero,
+      decoration: BoxDecoration(
+        color: const Color(0xFF0F172A),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.6),
+            blurRadius: 14,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      richMessage: WidgetSpan(
+        child: Container(
+          width: 220,
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.shopping_cart_outlined, size: 15, color: Colors.white),
+                      const SizedBox(width: 6),
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: statusColor.withValues(alpha: 0.18),
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(color: statusColor.withValues(alpha: 0.4)),
+                    ),
+                    child: Text(
+                      code,
+                      style: TextStyle(
+                        color: statusColor,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Container(
+                height: 1,
+                color: Colors.white.withValues(alpha: 0.08),
+              ),
+              const SizedBox(height: 8),
+              _row(Icons.place_outlined, location, const Color(0xFF94A3B8)),
+              const SizedBox(height: 4),
+              _row(Icons.timer_outlined, time, const Color(0xFF94A3B8)),
+              const SizedBox(height: 4),
+              if (defect != null)
+                _row(Icons.warning_amber_rounded, defect!, AppTheme.warning)
+              else if (battery != null)
+                _row(Icons.battery_charging_full_rounded, battery!, AppTheme.success),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Icon(Icons.circle, color: statusColor, size: 7),
+                  const SizedBox(width: 6),
+                  Text(
+                    status,
+                    style: TextStyle(
+                      color: statusColor,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: Container(
+          width: 32,
+          height: 32,
+          color: Colors.transparent,
+          alignment: Alignment.center,
+          child: _MapDot(color: dotColor),
+        ),
+      ),
+    );
+  }
+
+  Widget _row(IconData icon, String text, Color color) {
+    return Row(
+      children: [
+        Icon(icon, size: 13, color: color),
+        const SizedBox(width: 6),
+        Expanded(
+          child: Text(
+            text,
+            style: TextStyle(
+              color: color,
+              fontSize: 11,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
     );
   }
 }
