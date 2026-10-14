@@ -1,11 +1,163 @@
 import 'package:flutter/material.dart';
 import '../core/theme.dart';
 
-class ManagerDashboard extends StatelessWidget {
+class ManagerDashboard extends StatefulWidget {
   const ManagerDashboard({super.key});
 
   @override
+  State<ManagerDashboard> createState() => _ManagerDashboardState();
+}
+
+class _ManagerDashboardState extends State<ManagerDashboard> {
+  String _selectedDayKey = 'qua';
+
+  final Map<String, _DayDashboardData> _daysData = const {
+    'seg': _DayDashboardData(
+      key: 'seg',
+      menuLabel: 'Segunda-feira',
+      buttonLabel: 'Segunda',
+      dateDescription: 'Segunda, 18 de agosto de 2026',
+      peakLabel: 'Pico às 17h30',
+      peakIndex: 3,
+      chartPoints: [0.15, 0.42, 0.60, 0.85, 0.20],
+      totalMovimentado: '312',
+      totalSubtitle: 'Ciclos completos de carrinhos na segunda',
+      totalPillText: '+8%',
+      totalPillColor: AppTheme.success,
+      tempoMedio: '4m 10s',
+      tempoPillText: 'Normal',
+      tempoPillColor: AppTheme.success,
+      tarefasCriticas: '8',
+      tarefasPillText: 'Moderado',
+      tarefasPillColor: AppTheme.warning,
+      isToday: false,
+    ),
+    'ter': _DayDashboardData(
+      key: 'ter',
+      menuLabel: 'Terça-feira',
+      buttonLabel: 'Terça',
+      dateDescription: 'Terça, 19 de agosto de 2026',
+      peakLabel: 'Pico às 18h15',
+      peakIndex: 3,
+      chartPoints: [0.18, 0.45, 0.52, 0.88, 0.22],
+      totalMovimentado: '328',
+      totalSubtitle: 'Ciclos completos de carrinhos na terça',
+      totalPillText: '+10%',
+      totalPillColor: AppTheme.success,
+      tempoMedio: '4m 20s',
+      tempoPillText: 'Normal',
+      tempoPillColor: AppTheme.success,
+      tarefasCriticas: '9',
+      tarefasPillText: 'Moderado',
+      tarefasPillColor: AppTheme.warning,
+      isToday: false,
+    ),
+    'qua': _DayDashboardData(
+      key: 'qua',
+      menuLabel: 'Quarta-feira (Hoje)',
+      buttonLabel: 'Hoje',
+      dateDescription: 'Quarta, 23 de agosto de 2026',
+      peakLabel: 'Pico às 18h00',
+      peakIndex: 3,
+      chartPoints: [0.20, 0.48, 0.55, 0.94, 0.28],
+      totalMovimentado: '347',
+      totalSubtitle: 'Ciclos completos de carrinhos hoje',
+      totalPillText: '+12%',
+      totalPillColor: AppTheme.success,
+      tempoMedio: '4m 30s',
+      tempoPillText: 'Atenção',
+      tempoPillColor: AppTheme.warning,
+      tarefasCriticas: '12',
+      tarefasPillText: 'Crítico',
+      tarefasPillColor: AppTheme.error,
+      isToday: true,
+    ),
+    'qui': _DayDashboardData(
+      key: 'qui',
+      menuLabel: 'Quinta-feira',
+      buttonLabel: 'Quinta',
+      dateDescription: 'Quinta, 24 de agosto de 2026',
+      peakLabel: 'Pico às 18h30',
+      peakIndex: 3,
+      chartPoints: [0.22, 0.50, 0.58, 0.91, 0.32],
+      totalMovimentado: '365',
+      totalSubtitle: 'Ciclos completos de carrinhos na quinta',
+      totalPillText: '+15%',
+      totalPillColor: AppTheme.success,
+      tempoMedio: '4m 45s',
+      tempoPillText: 'Atenção',
+      tempoPillColor: AppTheme.warning,
+      tarefasCriticas: '14',
+      tarefasPillText: 'Crítico',
+      tarefasPillColor: AppTheme.error,
+      isToday: false,
+    ),
+    'sex': _DayDashboardData(
+      key: 'sex',
+      menuLabel: 'Sexta-feira',
+      buttonLabel: 'Sexta',
+      dateDescription: 'Sexta, 25 de agosto de 2026',
+      peakLabel: 'Pico às 19h00',
+      peakIndex: 3,
+      chartPoints: [0.25, 0.55, 0.70, 0.98, 0.45],
+      totalMovimentado: '420',
+      totalSubtitle: 'Ciclos completos de carrinhos na sexta',
+      totalPillText: '+24%',
+      totalPillColor: AppTheme.success,
+      tempoMedio: '5m 10s',
+      tempoPillText: 'Alerta',
+      tempoPillColor: AppTheme.warning,
+      tarefasCriticas: '19',
+      tarefasPillText: 'Crítico',
+      tarefasPillColor: AppTheme.error,
+      isToday: false,
+    ),
+    'sab': _DayDashboardData(
+      key: 'sab',
+      menuLabel: 'Sábado',
+      buttonLabel: 'Sábado',
+      dateDescription: 'Sábado, 26 de agosto de 2026',
+      peakLabel: 'Pico às 14h00',
+      peakIndex: 2,
+      chartPoints: [0.30, 0.82, 0.96, 0.72, 0.35],
+      totalMovimentado: '495',
+      totalSubtitle: 'Ciclos completos de carrinhos no sábado',
+      totalPillText: '+35%',
+      totalPillColor: AppTheme.success,
+      tempoMedio: '5m 35s',
+      tempoPillText: 'Alerta',
+      tempoPillColor: AppTheme.warning,
+      tarefasCriticas: '23',
+      tarefasPillText: 'Crítico',
+      tarefasPillColor: AppTheme.error,
+      isToday: false,
+    ),
+    'dom': _DayDashboardData(
+      key: 'dom',
+      menuLabel: 'Domingo',
+      buttonLabel: 'Domingo',
+      dateDescription: 'Domingo, 27 de agosto de 2026',
+      peakLabel: 'Pico às 11h30',
+      peakIndex: 1,
+      chartPoints: [0.18, 0.82, 0.65, 0.38, 0.15],
+      totalMovimentado: '275',
+      totalSubtitle: 'Ciclos completos de carrinhos no domingo',
+      totalPillText: '-6%',
+      totalPillColor: AppTheme.textSecondary,
+      tempoMedio: '3m 50s',
+      tempoPillText: 'Ótimo',
+      tempoPillColor: AppTheme.success,
+      tarefasCriticas: '5',
+      tarefasPillText: 'Baixo',
+      tarefasPillColor: AppTheme.success,
+      isToday: false,
+    ),
+  };
+
+  @override
   Widget build(BuildContext context) {
+    final currentDay = _daysData[_selectedDayKey] ?? _daysData['qua']!;
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -23,7 +175,7 @@ class ManagerDashboard extends StatelessWidget {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  'Quarta, 23 de agosto de 2026',
+                  currentDay.dateDescription,
                   style: TextStyle(fontSize: 12, color: AppTheme.textSecondary.withValues(alpha: 0.8)),
                 ),
               ],
@@ -31,20 +183,75 @@ class ManagerDashboard extends StatelessWidget {
           ],
         ),
         actions: [
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            decoration: BoxDecoration(
-              color: AppTheme.surface,
-              borderRadius: BorderRadius.circular(8),
+          Theme(
+            data: Theme.of(context).copyWith(
+              popupMenuTheme: const PopupMenuThemeData(
+                color: AppTheme.surface,
+              ),
             ),
-            child: const Row(
-              children: [
-                Icon(Icons.calendar_today, size: 14, color: AppTheme.textPrimary),
-                SizedBox(width: 6),
-                Text('Hoje', style: TextStyle(fontSize: 14, color: AppTheme.textPrimary)),
-                Icon(Icons.arrow_drop_down, color: AppTheme.textPrimary),
-              ],
+            child: PopupMenuButton<String>(
+              color: AppTheme.surface,
+              elevation: 10,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+                side: BorderSide(color: Colors.white.withValues(alpha: 0.12)),
+              ),
+              offset: const Offset(0, 48),
+              tooltip: 'Selecionar dia da semana',
+              onSelected: (dayKey) {
+                setState(() {
+                  _selectedDayKey = dayKey;
+                });
+              },
+              itemBuilder: (context) {
+                return _daysData.entries.map((entry) {
+                  final isSelected = entry.key == _selectedDayKey;
+                  return PopupMenuItem<String>(
+                    value: entry.key,
+                    child: Row(
+                      children: [
+                        Icon(
+                          isSelected ? Icons.check_circle_rounded : Icons.radio_button_unchecked,
+                          size: 16,
+                          color: isSelected ? AppTheme.primary : AppTheme.textSecondary,
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            entry.value.menuLabel,
+                            style: TextStyle(
+                              color: isSelected ? AppTheme.primary : AppTheme.textPrimary,
+                              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }).toList();
+              },
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                decoration: BoxDecoration(
+                  color: AppTheme.surface,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: AppTheme.primary.withValues(alpha: 0.3)),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.calendar_today, size: 14, color: AppTheme.textPrimary),
+                    const SizedBox(width: 6),
+                    Text(
+                      currentDay.buttonLabel,
+                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppTheme.textPrimary),
+                    ),
+                    const SizedBox(width: 2),
+                    const Icon(Icons.arrow_drop_down, color: AppTheme.textPrimary),
+                  ],
+                ),
+              ),
             ),
           ),
         ],
@@ -63,18 +270,21 @@ class ManagerDashboard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Row(
+                  Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Uso de Carrinhos por Horário', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                      // Pílula Pico
-                      _StatusPill(text: 'Pico às 18h00', color: AppTheme.primary),
+                      const Text('Uso de Carrinhos por Horário', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                      // Pílula Pico dinâmica
+                      _StatusPill(text: currentDay.peakLabel, color: AppTheme.primary),
                     ],
                   ),
                   const SizedBox(height: 4),
                   const Text('Monitoramento de fluxo ativo na loja', style: TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
                   const SizedBox(height: 16),
-                  const _HourlyUsageChart(),
+                  _HourlyUsageChart(
+                    normalizedPoints: currentDay.chartPoints,
+                    peakIndex: currentDay.peakIndex,
+                  ),
                 ],
               ),
             ),
@@ -83,10 +293,10 @@ class ManagerDashboard extends StatelessWidget {
             // Card Total Movimentado
             _MetricCard(
               title: 'Total Movimentado',
-              subtitle: 'Ciclos completos de carrinhos hoje',
-              value: '347',
-              pillText: '+12%',
-              pillColor: AppTheme.success,
+              subtitle: currentDay.totalSubtitle,
+              value: currentDay.totalMovimentado,
+              pillText: currentDay.totalPillText,
+              pillColor: currentDay.totalPillColor,
             ),
             const SizedBox(height: 16),
 
@@ -94,26 +304,67 @@ class ManagerDashboard extends StatelessWidget {
             _MetricCard(
               title: 'Tempo Médio de Reposição',
               subtitle: 'Tempo para retornar carrinhos às estações',
-              value: '4m 30s',
-              pillText: 'Atenção',
-              pillColor: AppTheme.warning,
+              value: currentDay.tempoMedio,
+              pillText: currentDay.tempoPillText,
+              pillColor: currentDay.tempoPillColor,
             ),
             const SizedBox(height: 16),
 
             // Card Tarefas Críticas
             _MetricCard(
-              title: 'Tarefas Críticas Hoje',
+              title: currentDay.isToday ? 'Tarefas Críticas Hoje' : 'Tarefas Críticas do Dia',
               subtitle: 'Abandono fora da zona de tolerância',
-              value: '12',
-              pillText: 'Crítico',
-              pillColor: AppTheme.error,
+              value: currentDay.tarefasCriticas,
+              pillText: currentDay.tarefasPillText,
+              pillColor: currentDay.tarefasPillColor,
             ),
           ],
         ),
       ),
-// bottomNavigationBar removido para o Wrapper
     );
   }
+}
+
+class _DayDashboardData {
+  final String key;
+  final String menuLabel;
+  final String buttonLabel;
+  final String dateDescription;
+  final String peakLabel;
+  final int peakIndex;
+  final List<double> chartPoints;
+  final String totalMovimentado;
+  final String totalSubtitle;
+  final String totalPillText;
+  final Color totalPillColor;
+  final String tempoMedio;
+  final String tempoPillText;
+  final Color tempoPillColor;
+  final String tarefasCriticas;
+  final String tarefasPillText;
+  final Color tarefasPillColor;
+  final bool isToday;
+
+  const _DayDashboardData({
+    required this.key,
+    required this.menuLabel,
+    required this.buttonLabel,
+    required this.dateDescription,
+    required this.peakLabel,
+    required this.peakIndex,
+    required this.chartPoints,
+    required this.totalMovimentado,
+    required this.totalSubtitle,
+    required this.totalPillText,
+    required this.totalPillColor,
+    required this.tempoMedio,
+    required this.tempoPillText,
+    required this.tempoPillColor,
+    required this.tarefasCriticas,
+    required this.tarefasPillText,
+    required this.tarefasPillColor,
+    required this.isToday,
+  });
 }
 
 class _MetricCard extends StatelessWidget {
@@ -171,6 +422,10 @@ class _StatusPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isPeak = text.startsWith('Pico');
+    final bool isTrend = text.contains('%');
+    final bool isWarningOrCritical = text == 'Atenção' || text == 'Crítico' || text == 'Alerta';
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
@@ -181,14 +436,14 @@ class _StatusPill extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (text.contains('%') || text == 'Pico às 18h00') // Lógica simples para os ícones
-            Icon(
-              text.contains('%') ? Icons.trending_up : Icons.circle, 
-              size: 12, 
-              color: color
-            )
+          if (isTrend)
+            Icon(Icons.trending_up, size: 12, color: color)
+          else if (isPeak)
+            Icon(Icons.access_time_rounded, size: 12, color: color)
+          else if (isWarningOrCritical)
+            Icon(Icons.warning_amber_rounded, size: 12, color: color)
           else
-            Icon(Icons.warning_amber_rounded, size: 12, color: color),
+            Icon(Icons.check_circle_outline, size: 12, color: color),
           const SizedBox(width: 4),
           Text(
             text,
@@ -201,7 +456,13 @@ class _StatusPill extends StatelessWidget {
 }
 
 class _HourlyUsageChart extends StatelessWidget {
-  const _HourlyUsageChart();
+  final List<double> normalizedPoints;
+  final int peakIndex;
+
+  const _HourlyUsageChart({
+    required this.normalizedPoints,
+    required this.peakIndex,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -211,7 +472,10 @@ class _HourlyUsageChart extends StatelessWidget {
           height: 130,
           width: double.infinity,
           child: CustomPaint(
-            painter: _ChartPainter(),
+            painter: _ChartPainter(
+              normalizedPoints: normalizedPoints,
+              peakIndex: peakIndex,
+            ),
           ),
         ),
         const SizedBox(height: 8),
@@ -231,6 +495,14 @@ class _HourlyUsageChart extends StatelessWidget {
 }
 
 class _ChartPainter extends CustomPainter {
+  final List<double> normalizedPoints;
+  final int peakIndex;
+
+  _ChartPainter({
+    required this.normalizedPoints,
+    required this.peakIndex,
+  });
+
   @override
   void paint(Canvas canvas, Size size) {
     const leftPad = 8.0;
@@ -241,9 +513,6 @@ class _ChartPainter extends CustomPainter {
     final usableWidth = size.width - leftPad - rightPad;
     final usableHeight = size.height - topPad - bottomPad;
 
-    // Normalizado de 0 a 1 (0 é a base, 1 é o pico)
-    // 6h: 20%, 10h: 48%, 14h: 55%, 18h: 94% (Pico), 22h: 28%
-    final normalizedPoints = [0.20, 0.48, 0.55, 0.94, 0.28];
     final stepX = usableWidth / (normalizedPoints.length - 1);
 
     final points = List.generate(normalizedPoints.length, (i) {
@@ -270,8 +539,9 @@ class _ChartPainter extends CustomPainter {
       ..strokeWidth = 1.0;
     canvas.drawLine(Offset(0, baselineY), Offset(size.width, baselineY), baseLinePaint);
 
-    // 3. Linha guia pontilhada vertical no pico (18h)
-    final peakPoint = points[3];
+    // 3. Linha guia pontilhada vertical no pico
+    final safePeakIndex = peakIndex.clamp(0, points.length - 1);
+    final peakPoint = points[safePeakIndex];
     final dashPaint = Paint()
       ..color = const Color(0xFF3B82F6).withValues(alpha: 0.35)
       ..strokeWidth = 1.2;
@@ -337,10 +607,10 @@ class _ChartPainter extends CustomPainter {
 
     canvas.drawPath(linePath, linePaint);
 
-    // 6. Pontos de dados (Nodes) com destaque no pico das 18h
+    // 6. Pontos de dados (Nodes) com destaque no pico
     for (int i = 0; i < points.length; i++) {
       final pt = points[i];
-      if (i == 3) {
+      if (i == safePeakIndex) {
         // Halo de brilho externo
         canvas.drawCircle(
           pt,
@@ -376,6 +646,7 @@ class _ChartPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant _ChartPainter oldDelegate) {
+    return oldDelegate.normalizedPoints != normalizedPoints || oldDelegate.peakIndex != peakIndex;
+  }
 }
-

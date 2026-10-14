@@ -448,9 +448,249 @@ class _EquipmentDetailScreenState extends State<EquipmentDetailScreen> {
                 ],
               ),
             ),
+            const SizedBox(height: 16),
+
+            // Card: Ciclo de Vida & Histórico
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: AppTheme.surface,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: AppTheme.primary.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(Icons.timeline_rounded, color: AppTheme.primary, size: 20),
+                      ),
+                      const SizedBox(width: 12),
+                      const Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Ciclo de Vida & Histórico',
+                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppTheme.textPrimary),
+                            ),
+                            SizedBox(height: 2),
+                            Text(
+                              'Linha do tempo e rastreabilidade deste equipamento',
+                              style: TextStyle(color: AppTheme.textSecondary, fontSize: 11),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  
+                  _buildTimelineItem(
+                    title: 'Previsão de Retorno Operacional',
+                    badge: 'Em Manutenção',
+                    badgeColor: AppTheme.warning,
+                    timestamp: 'Previsto para Hoje às 16:30',
+                    description: 'Aguardando substituição do conjunto de rodízios na oficina interna de reparos.',
+                    icon: Icons.schedule_rounded,
+                    iconColor: AppTheme.warning,
+                    isFirst: true,
+                    isLast: false,
+                    isPending: true,
+                  ),
+                  _buildTimelineItem(
+                    title: 'Encaminhado para Conserto',
+                    badge: 'OS #048',
+                    badgeColor: AppTheme.primary,
+                    timestamp: 'Hoje às 14:35 • Aline Carvalho (Gerente)',
+                    description: 'Ordem de serviço aberta. Status alterado no sistema para "Em conserto" e carrinho retirado de circulação.',
+                    icon: Icons.build_circle_outlined,
+                    iconColor: AppTheme.primary,
+                    isFirst: false,
+                    isLast: false,
+                    isPending: false,
+                  ),
+                  _buildTimelineItem(
+                    title: 'Avaria Reportada em Campo',
+                    badge: 'Crítico',
+                    badgeColor: AppTheme.error,
+                    timestamp: 'Hoje às 14:10 • João Silva (Repositor)',
+                    description: 'Roda dianteira travada e com trinca detectada durante coleta na Estação 4. Foto anexada ao sistema.',
+                    icon: Icons.report_problem_outlined,
+                    iconColor: AppTheme.error,
+                    isFirst: false,
+                    isLast: false,
+                    isPending: false,
+                  ),
+                  _buildTimelineItem(
+                    title: 'Última Coleta e Reposição',
+                    badge: 'Concluído',
+                    badgeColor: AppTheme.success,
+                    timestamp: 'Hoje às 11:15 • Marcos Silva (Repositor)',
+                    description: 'Carrinho recolhido no estacionamento externo e retornado com sucesso à baia da Estação 1.',
+                    icon: Icons.replay_rounded,
+                    iconColor: AppTheme.success,
+                    isFirst: false,
+                    isLast: false,
+                    isPending: false,
+                  ),
+                  _buildTimelineItem(
+                    title: 'Cadastro e Entrada em Operação',
+                    badge: 'Origem',
+                    badgeColor: AppTheme.textSecondary,
+                    timestamp: '24/02/2026 às 08:30 • Sistema Synercart',
+                    description: 'Identificador RFID tag #CR00${widget.cartNumber} pareado e alocado inicialmente na Estação 1 - Entrada.',
+                    icon: Icons.inventory_2_outlined,
+                    iconColor: AppTheme.primary,
+                    isFirst: false,
+                    isLast: true,
+                    isPending: false,
+                  ),
+                ],
+              ),
+            ),
             const SizedBox(height: 20),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildTimelineItem({
+    required String title,
+    required String badge,
+    required Color badgeColor,
+    required String timestamp,
+    required String description,
+    required IconData icon,
+    required Color iconColor,
+    required bool isFirst,
+    required bool isLast,
+    required bool isPending,
+  }) {
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Coluna da linha do tempo (Ícone + Linha vertical)
+          SizedBox(
+            width: 36,
+            child: Column(
+              children: [
+                Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: isPending 
+                        ? iconColor.withValues(alpha: 0.15)
+                        : iconColor.withValues(alpha: 0.2),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: iconColor,
+                      width: 1.5,
+                    ),
+                  ),
+                  child: Center(
+                    child: Icon(icon, color: iconColor, size: 16),
+                  ),
+                ),
+                if (!isLast)
+                  Expanded(
+                    child: Container(
+                      width: 2,
+                      margin: const EdgeInsets.symmetric(vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(1),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          // Conteúdo do evento
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.only(bottom: isLast ? 0 : 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Text(
+                          title,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: isPending ? AppTheme.textPrimary : Colors.white,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: badgeColor.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(4),
+                          border: Border.all(color: badgeColor.withValues(alpha: 0.3)),
+                        ),
+                        child: Text(
+                          badge,
+                          style: TextStyle(
+                            color: badgeColor,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Icon(Icons.access_time_rounded, size: 11, color: AppTheme.textSecondary.withValues(alpha: 0.8)),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          timestamp,
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: AppTheme.textSecondary.withValues(alpha: 0.8),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: AppTheme.background,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.04)),
+                    ),
+                    child: Text(
+                      description,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppTheme.textSecondary.withValues(alpha: 0.9),
+                        height: 1.3,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
