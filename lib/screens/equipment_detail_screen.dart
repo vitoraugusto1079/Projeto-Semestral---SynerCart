@@ -19,6 +19,7 @@ class _EquipmentDetailScreenState extends State<EquipmentDetailScreen> {
   late String _status;
   late TextEditingController _problemController;
   bool _hasPhotoAttached = false;
+  bool _isHistoryExpanded = false;
 
   final List<String> _statusOptions = ['Ativo', 'Em conserto', 'Inativo'];
 
@@ -450,9 +451,8 @@ class _EquipmentDetailScreenState extends State<EquipmentDetailScreen> {
             ),
             const SizedBox(height: 16),
 
-            // Card: Ciclo de Vida & Histórico
+            // Card: Ciclo de Vida & Histórico (Dropdown / Expansível)
             Container(
-              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 color: AppTheme.surface,
                 borderRadius: BorderRadius.circular(16),
@@ -460,96 +460,168 @@ class _EquipmentDetailScreenState extends State<EquipmentDetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: AppTheme.primary.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Icon(Icons.timeline_rounded, color: AppTheme.primary, size: 20),
-                      ),
-                      const SizedBox(width: 12),
-                      const Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Ciclo de Vida & Histórico',
-                              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppTheme.textPrimary),
+                  InkWell(
+                    onTap: () {
+                      setState(() {
+                        _isHistoryExpanded = !_isHistoryExpanded;
+                      });
+                    },
+                    borderRadius: BorderRadius.circular(16),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: AppTheme.primary.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(8),
                             ),
-                            SizedBox(height: 2),
-                            Text(
-                              'Linha do tempo e rastreabilidade deste equipamento',
-                              style: TextStyle(color: AppTheme.textSecondary, fontSize: 11),
+                            child: const Icon(Icons.timeline_rounded, color: AppTheme.primary, size: 20),
+                          ),
+                          const SizedBox(width: 12),
+                          const Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Ciclo de Vida & Histórico',
+                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppTheme.textPrimary),
+                                ),
+                                SizedBox(height: 2),
+                                Text(
+                                  'Linha do tempo e rastreabilidade deste equipamento',
+                                  style: TextStyle(color: AppTheme.textSecondary, fontSize: 11),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: _isHistoryExpanded
+                                  ? AppTheme.primary.withValues(alpha: 0.15)
+                                  : AppTheme.background,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: _isHistoryExpanded
+                                    ? AppTheme.primary.withValues(alpha: 0.4)
+                                    : Colors.white.withValues(alpha: 0.08),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  _isHistoryExpanded ? 'Ocultar' : 'Ver histórico',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: _isHistoryExpanded ? AppTheme.primary : AppTheme.textSecondary,
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                AnimatedRotation(
+                                  turns: _isHistoryExpanded ? 0.5 : 0.0,
+                                  duration: const Duration(milliseconds: 200),
+                                  child: Icon(
+                                    Icons.keyboard_arrow_down_rounded,
+                                    color: _isHistoryExpanded ? AppTheme.primary : AppTheme.textSecondary,
+                                    size: 18,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
-                  const SizedBox(height: 20),
-                  
-                  _buildTimelineItem(
-                    title: 'Previsão de Retorno Operacional',
-                    badge: 'Em Manutenção',
-                    badgeColor: AppTheme.warning,
-                    timestamp: 'Previsto para Hoje às 16:30',
-                    description: 'Aguardando substituição do conjunto de rodízios na oficina interna de reparos.',
-                    icon: Icons.schedule_rounded,
-                    iconColor: AppTheme.warning,
-                    isFirst: true,
-                    isLast: false,
-                    isPending: true,
-                  ),
-                  _buildTimelineItem(
-                    title: 'Encaminhado para Conserto',
-                    badge: 'OS #048',
-                    badgeColor: AppTheme.primary,
-                    timestamp: 'Hoje às 14:35 • Aline Carvalho (Gerente)',
-                    description: 'Ordem de serviço aberta. Status alterado no sistema para "Em conserto" e carrinho retirado de circulação.',
-                    icon: Icons.build_circle_outlined,
-                    iconColor: AppTheme.primary,
-                    isFirst: false,
-                    isLast: false,
-                    isPending: false,
-                  ),
-                  _buildTimelineItem(
-                    title: 'Avaria Reportada em Campo',
-                    badge: 'Crítico',
-                    badgeColor: AppTheme.error,
-                    timestamp: 'Hoje às 14:10 • João Silva (Repositor)',
-                    description: 'Roda dianteira travada e com trinca detectada durante coleta na Estação 4. Foto anexada ao sistema.',
-                    icon: Icons.report_problem_outlined,
-                    iconColor: AppTheme.error,
-                    isFirst: false,
-                    isLast: false,
-                    isPending: false,
-                  ),
-                  _buildTimelineItem(
-                    title: 'Última Coleta e Reposição',
-                    badge: 'Concluído',
-                    badgeColor: AppTheme.success,
-                    timestamp: 'Hoje às 11:15 • Marcos Silva (Repositor)',
-                    description: 'Carrinho recolhido no estacionamento externo e retornado com sucesso à baia da Estação 1.',
-                    icon: Icons.replay_rounded,
-                    iconColor: AppTheme.success,
-                    isFirst: false,
-                    isLast: false,
-                    isPending: false,
-                  ),
-                  _buildTimelineItem(
-                    title: 'Cadastro e Entrada em Operação',
-                    badge: 'Origem',
-                    badgeColor: AppTheme.textSecondary,
-                    timestamp: '24/02/2026 às 08:30 • Sistema Synercart',
-                    description: 'Identificador RFID tag #CR00${widget.cartNumber} pareado e alocado inicialmente na Estação 1 - Entrada.',
-                    icon: Icons.inventory_2_outlined,
-                    iconColor: AppTheme.primary,
-                    isFirst: false,
-                    isLast: true,
-                    isPending: false,
+                  AnimatedSize(
+                    duration: const Duration(milliseconds: 250),
+                    curve: Curves.easeInOut,
+                    alignment: Alignment.topCenter,
+                    child: _isHistoryExpanded
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Divider(
+                                height: 1,
+                                thickness: 1,
+                                color: Colors.white.withValues(alpha: 0.08),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(20),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _buildTimelineItem(
+                                      title: 'Previsão de Retorno Operacional',
+                                      badge: 'Em Manutenção',
+                                      badgeColor: AppTheme.warning,
+                                      timestamp: 'Previsto para Hoje às 16:30',
+                                      description: 'Aguardando substituição do conjunto de rodízios na oficina interna de reparos.',
+                                      icon: Icons.schedule_rounded,
+                                      iconColor: AppTheme.warning,
+                                      isFirst: true,
+                                      isLast: false,
+                                      isPending: true,
+                                    ),
+                                    _buildTimelineItem(
+                                      title: 'Encaminhado para Conserto',
+                                      badge: 'OS #048',
+                                      badgeColor: AppTheme.primary,
+                                      timestamp: 'Hoje às 14:35 • Aline Carvalho (Gerente)',
+                                      description: 'Ordem de serviço aberta. Status alterado no sistema para "Em conserto" e carrinho retirado de circulação.',
+                                      icon: Icons.build_circle_outlined,
+                                      iconColor: AppTheme.primary,
+                                      isFirst: false,
+                                      isLast: false,
+                                      isPending: false,
+                                    ),
+                                    _buildTimelineItem(
+                                      title: 'Avaria Reportada em Campo',
+                                      badge: 'Crítico',
+                                      badgeColor: AppTheme.error,
+                                      timestamp: 'Hoje às 14:10 • João Silva (Repositor)',
+                                      description: 'Roda dianteira travada e com trinca detectada durante coleta na Estação 4. Foto anexada ao sistema.',
+                                      icon: Icons.report_problem_outlined,
+                                      iconColor: AppTheme.error,
+                                      isFirst: false,
+                                      isLast: false,
+                                      isPending: false,
+                                    ),
+                                    _buildTimelineItem(
+                                      title: 'Última Coleta e Reposição',
+                                      badge: 'Concluído',
+                                      badgeColor: AppTheme.success,
+                                      timestamp: 'Hoje às 11:15 • Marcos Silva (Repositor)',
+                                      description: 'Carrinho recolhido no estacionamento externo e retornado com sucesso à baia da Estação 1.',
+                                      icon: Icons.replay_rounded,
+                                      iconColor: AppTheme.success,
+                                      isFirst: false,
+                                      isLast: false,
+                                      isPending: false,
+                                    ),
+                                    _buildTimelineItem(
+                                      title: 'Cadastro e Entrada em Operação',
+                                      badge: 'Origem',
+                                      badgeColor: AppTheme.textSecondary,
+                                      timestamp: '24/02/2026 às 08:30 • Sistema Synercart',
+                                      description: 'Identificador RFID tag #CR00${widget.cartNumber} pareado e alocado inicialmente na Estação 1 - Entrada.',
+                                      icon: Icons.inventory_2_outlined,
+                                      iconColor: AppTheme.primary,
+                                      isFirst: false,
+                                      isLast: true,
+                                      isPending: false,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          )
+                        : const SizedBox.shrink(),
                   ),
                 ],
               ),
