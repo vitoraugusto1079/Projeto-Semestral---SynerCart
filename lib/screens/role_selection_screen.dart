@@ -36,16 +36,15 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Spacer(),
+              const SizedBox(height: 32),
               // Logo do Figma
               Image.asset('lib/assets/icons/logo.png', height: 160),
-              const SizedBox(height: 12),
-              const SizedBox(height: 8),
+              const SizedBox(height: 16),
               const Text(
                 'Gestão Inteligente de Frota de Carrinhos',
                 style: TextStyle(color: AppTheme.textSecondary, fontSize: 14),
               ),
-              const Spacer(),
+              const SizedBox(height: 48),
               
               const Text(
                 'Escolha sua área de atuação',
@@ -70,14 +69,14 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                 onTap: () => setState(() => selectedRole = 'employee'),
               ),
               
-              const SizedBox(height: 32),
+              const SizedBox(height: 24),
               
               ElevatedButton(
                 onPressed: _confirmRole,
                 child: const Text('Confirmar'),
               ),
               
-              const SizedBox(height: 24),
+              const Spacer(),
               const Text(
                 'v2.4.1 — Conectado de forma segura',
                 style: TextStyle(color: AppTheme.textSecondary, fontSize: 12),
