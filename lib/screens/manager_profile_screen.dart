@@ -4,8 +4,15 @@ import '../core/theme.dart';
 import 'role_selection_screen.dart';
 import 'edit_profile_screen.dart';
 
-class ManagerProfileScreen extends StatelessWidget {
+class ManagerProfileScreen extends StatefulWidget {
   const ManagerProfileScreen({super.key});
+
+  @override
+  State<ManagerProfileScreen> createState() => _ManagerProfileScreenState();
+}
+
+class _ManagerProfileScreenState extends State<ManagerProfileScreen> {
+  bool _reportDownloaded = false;
 
   @override
   Widget build(BuildContext context) {
@@ -166,15 +173,12 @@ class ManagerProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             
-            // Arquivo baixado com sucesso!
+            // Baixar relatório semanal / Arquivo baixado com sucesso!
             GestureDetector(
               onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Relatório de turno em PDF baixado com sucesso!'),
-                    backgroundColor: AppTheme.success,
-                  ),
-                );
+                setState(() {
+                  _reportDownloaded = true;
+                });
               },
               child: Container(
                 padding: const EdgeInsets.all(16),
@@ -200,10 +204,12 @@ class ManagerProfileScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 16),
-                    const Expanded(
+                    Expanded(
                       child: Text(
-                        'Arquivo baixado com sucesso!',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.white),
+                        _reportDownloaded
+                            ? 'Arquivo baixado com sucesso!'
+                            : 'Baixar relatório semanal',
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.white),
                       ),
                     ),
                   ],
