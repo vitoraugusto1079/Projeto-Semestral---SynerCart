@@ -1,11 +1,273 @@
 import 'package:flutter/material.dart';
 import '../core/theme.dart';
 
-class ManagerMapScreen extends StatelessWidget {
+class ManagerMapScreen extends StatefulWidget {
   const ManagerMapScreen({super.key});
 
   @override
+  State<ManagerMapScreen> createState() => _ManagerMapScreenState();
+}
+
+class _ManagerMapScreenState extends State<ManagerMapScreen> {
+  String _selectedStationKey = 'hortifruti';
+
+  static const Map<String, _StationMapData> _stations = {
+    'entrada': _StationMapData(
+      key: 'entrada',
+      name: 'Estação 1 - Entrada',
+      sectorSubtitle: 'Acesso ao Supermercado',
+      imageAsset: 'lib/assets/icons/mapa_entrada.png',
+      outOfStationTitle: '3 Carrinhos fora\ndas estações',
+      damagedTitle: '1 Carrinho com\navaria',
+      activeEmployeesTitle: 'Funcionários\nativos: 40',
+      activeEmployeesSubtitle: '4 funcionários alocados\nnessa estação',
+      markers: [
+        _MarkerData(
+          xFactor: 0.48,
+          yFactor: 0.22,
+          dotColor: AppTheme.error,
+          title: 'Carrinho #02',
+          code: 'CR002',
+          status: 'Fora da Estação',
+          statusColor: AppTheme.error,
+          location: 'Entrada • Catracas',
+          time: 'Parado há 11 min',
+        ),
+        _MarkerData(
+          xFactor: 0.64,
+          yFactor: 0.38,
+          dotColor: AppTheme.error,
+          title: 'Carrinho #05',
+          code: 'CR005',
+          status: 'Fora da Estação',
+          statusColor: AppTheme.error,
+          location: 'Entrada • Atendimento',
+          time: 'Parado há 15 min',
+        ),
+        _MarkerData(
+          xFactor: 0.28,
+          yFactor: 0.82,
+          dotColor: AppTheme.warning,
+          title: 'Carrinho #09',
+          code: 'CR009',
+          status: 'Avaria Relatada',
+          statusColor: AppTheme.warning,
+          location: 'Entrada • Baia Principal',
+          time: 'Parado há 29 min',
+          defect: 'Grade lateral amassada',
+        ),
+        _MarkerData(
+          xFactor: 0.62,
+          yFactor: 0.74,
+          dotColor: AppTheme.error,
+          title: 'Carrinho #14',
+          code: 'CR014',
+          status: 'Fora da Estação',
+          statusColor: AppTheme.error,
+          location: 'Entrada • Cestos',
+          time: 'Parado há 7 min',
+        ),
+      ],
+    ),
+    'saida': _StationMapData(
+      key: 'saida',
+      name: 'Estação 2 - Saída',
+      sectorSubtitle: 'Caixas e Pagamento',
+      imageAsset: 'lib/assets/icons/mapa_saida.png',
+      outOfStationTitle: '4 Carrinhos fora\ndas estações',
+      damagedTitle: '1 Carrinho com\navaria',
+      activeEmployeesTitle: 'Funcionários\nativos: 40',
+      activeEmployeesSubtitle: '5 funcionários alocados\nnessa estação',
+      markers: [
+        _MarkerData(
+          xFactor: 0.36,
+          yFactor: 0.44,
+          dotColor: AppTheme.error,
+          title: 'Carrinho #04',
+          code: 'CR004',
+          status: 'Fora da Estação',
+          statusColor: AppTheme.error,
+          location: 'Saída • Caixa 01',
+          time: 'Parado há 14 min',
+        ),
+        _MarkerData(
+          xFactor: 0.60,
+          yFactor: 0.46,
+          dotColor: AppTheme.error,
+          title: 'Carrinho #11',
+          code: 'CR011',
+          status: 'Fora da Estação',
+          statusColor: AppTheme.error,
+          location: 'Saída • Caixa 02',
+          time: 'Parado há 8 min',
+        ),
+        _MarkerData(
+          xFactor: 0.78,
+          yFactor: 0.56,
+          dotColor: AppTheme.warning,
+          title: 'Carrinho #16',
+          code: 'CR016',
+          status: 'Avaria Relatada',
+          statusColor: AppTheme.warning,
+          location: 'Saída • Caixa 03',
+          time: 'Parado há 41 min',
+          defect: 'Alça de apoio solta',
+        ),
+        _MarkerData(
+          xFactor: 0.24,
+          yFactor: 0.75,
+          dotColor: AppTheme.error,
+          title: 'Carrinho #22',
+          code: 'CR022',
+          status: 'Fora da Estação',
+          statusColor: AppTheme.error,
+          location: 'Saída • Corredor Sul',
+          time: 'Parado há 19 min',
+        ),
+        _MarkerData(
+          xFactor: 0.50,
+          yFactor: 0.84,
+          dotColor: AppTheme.error,
+          title: 'Carrinho #28',
+          code: 'CR028',
+          status: 'Fora da Estação',
+          statusColor: AppTheme.error,
+          location: 'Saída • Portas',
+          time: 'Parado há 6 min',
+        ),
+      ],
+    ),
+    'hortifruti': _StationMapData(
+      key: 'hortifruti',
+      name: 'Estação 3 - Hortifrúti',
+      sectorSubtitle: 'Frutas e Verduras',
+      imageAsset: 'lib/assets/icons/mapa_planta.png',
+      outOfStationTitle: '6 Carrinhos fora\ndas estações',
+      damagedTitle: '1 Carrinho com\navaria',
+      activeEmployeesTitle: 'Funcionários\nativos: 40',
+      activeEmployeesSubtitle: '6 funcionários com\ncargo para função',
+      markers: [
+        _MarkerData(
+          xFactor: 0.12,
+          yFactor: 0.065,
+          dotColor: AppTheme.error,
+          title: 'Carrinho #12',
+          code: 'CR012',
+          status: 'Fora da Estação',
+          statusColor: AppTheme.error,
+          location: 'Hortifrúti • Maçãs',
+          time: 'Parado há 18 min',
+        ),
+        _MarkerData(
+          xFactor: 0.81,
+          yFactor: 0.145,
+          dotColor: AppTheme.warning,
+          title: 'Carrinho #07',
+          code: 'CR007',
+          status: 'Avaria Relatada',
+          statusColor: AppTheme.warning,
+          location: 'Hortifrúti • Temperos',
+          time: 'Parado há 34 min',
+          defect: 'Roda dianteira travada',
+        ),
+        _MarkerData(
+          xFactor: 0.745,
+          yFactor: 0.485,
+          dotColor: AppTheme.error,
+          title: 'Carrinho #19',
+          code: 'CR019',
+          status: 'Fora da Estação',
+          statusColor: AppTheme.error,
+          location: 'Hortifrúti • Balcão',
+          time: 'Parado há 9 min',
+        ),
+        _MarkerData(
+          xFactor: 0.26,
+          yFactor: 0.705,
+          dotColor: AppTheme.error,
+          title: 'Carrinho #25',
+          code: 'CR025',
+          status: 'Fora da Estação',
+          statusColor: AppTheme.error,
+          location: 'Hortifrúti • Verduras',
+          time: 'Parado há 27 min',
+        ),
+        _MarkerData(
+          xFactor: 0.835,
+          yFactor: 0.92,
+          dotColor: AppTheme.error,
+          title: 'Carrinho #31',
+          code: 'CR031',
+          status: 'Fora da Estação',
+          statusColor: AppTheme.error,
+          location: 'Hortifrúti • Saída',
+          time: 'Parado há 12 min',
+        ),
+      ],
+    ),
+    'padaria': _StationMapData(
+      key: 'padaria',
+      name: 'Estação 4 - Padaria',
+      sectorSubtitle: 'Pães e Confeitaria',
+      imageAsset: 'lib/assets/icons/mapa_padaria.png',
+      outOfStationTitle: '3 Carrinhos fora\ndas estações',
+      damagedTitle: '1 Carrinho com\navaria',
+      activeEmployeesTitle: 'Funcionários\nativos: 40',
+      activeEmployeesSubtitle: '4 funcionários alocados\nnessa estação',
+      markers: [
+        _MarkerData(
+          xFactor: 0.28,
+          yFactor: 0.18,
+          dotColor: AppTheme.error,
+          title: 'Carrinho #03',
+          code: 'CR003',
+          status: 'Fora da Estação',
+          statusColor: AppTheme.error,
+          location: 'Padaria • Baguetes',
+          time: 'Parado há 16 min',
+        ),
+        _MarkerData(
+          xFactor: 0.67,
+          yFactor: 0.32,
+          dotColor: AppTheme.error,
+          title: 'Carrinho #08',
+          code: 'CR008',
+          status: 'Fora da Estação',
+          statusColor: AppTheme.error,
+          location: 'Padaria • Confeitaria',
+          time: 'Parado há 22 min',
+        ),
+        _MarkerData(
+          xFactor: 0.28,
+          yFactor: 0.52,
+          dotColor: AppTheme.warning,
+          title: 'Carrinho #15',
+          code: 'CR015',
+          status: 'Avaria Relatada',
+          statusColor: AppTheme.warning,
+          location: 'Padaria • Pães Caseiros',
+          time: 'Parado há 38 min',
+          defect: 'Rodízio traseiro travando',
+        ),
+        _MarkerData(
+          xFactor: 0.66,
+          yFactor: 0.72,
+          dotColor: AppTheme.error,
+          title: 'Carrinho #21',
+          code: 'CR021',
+          status: 'Fora da Estação',
+          statusColor: AppTheme.error,
+          location: 'Padaria • Bolos',
+          time: 'Parado há 10 min',
+        ),
+      ],
+    ),
+  };
+
+  @override
   Widget build(BuildContext context) {
+    final currentStation = _stations[_selectedStationKey] ?? _stations['hortifruti']!;
+
     return Scaffold(
       backgroundColor: const Color(0xFF090D1A),
       appBar: AppBar(
@@ -53,6 +315,140 @@ class ManagerMapScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
         child: Column(
           children: [
+            // Seletor de Estação
+            Theme(
+              data: Theme.of(context).copyWith(
+                popupMenuTheme: const PopupMenuThemeData(
+                  color: Color(0xFF1E293B),
+                ),
+              ),
+              child: PopupMenuButton<String>(
+                color: const Color(0xFF1E293B),
+                elevation: 10,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  side: BorderSide(color: Colors.white.withValues(alpha: 0.12)),
+                ),
+                offset: const Offset(0, 54),
+                tooltip: 'Selecionar estação',
+                onSelected: (stationKey) {
+                  setState(() {
+                    _selectedStationKey = stationKey;
+                  });
+                },
+                itemBuilder: (context) {
+                  return _stations.entries.map((entry) {
+                    final isSelected = entry.key == _selectedStationKey;
+                    return PopupMenuItem<String>(
+                      value: entry.key,
+                      child: Row(
+                        children: [
+                          Icon(
+                            isSelected ? Icons.check_circle_rounded : Icons.location_on_outlined,
+                            size: 16,
+                            color: isSelected ? AppTheme.primary : AppTheme.textSecondary,
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  entry.value.name,
+                                  style: TextStyle(
+                                    color: isSelected ? AppTheme.primary : AppTheme.textPrimary,
+                                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                                Text(
+                                  entry.value.sectorSubtitle,
+                                  style: const TextStyle(
+                                    color: AppTheme.textSecondary,
+                                    fontSize: 10,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList();
+                },
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1E293B),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: AppTheme.primary.withValues(alpha: 0.35)),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: AppTheme.primary.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(Icons.location_on_outlined, color: AppTheme.primary, size: 18),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              currentStation.name,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              currentStation.sectorSubtitle,
+                              style: const TextStyle(
+                                fontSize: 11,
+                                color: Color(0xFF94A3B8),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF0F172A),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Trocar estação',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: AppTheme.textPrimary,
+                              ),
+                            ),
+                            SizedBox(width: 4),
+                            Icon(Icons.keyboard_arrow_down_rounded, color: AppTheme.textPrimary, size: 16),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
             // Planta Baixa Centralizada com AspectRatio e Zoom
             Center(
               child: Container(
@@ -74,6 +470,7 @@ class ManagerMapScreen extends StatelessWidget {
                   child: AspectRatio(
                     aspectRatio: 1076 / 1462,
                     child: InteractiveViewer(
+                      key: ValueKey(currentStation.key),
                       maxScale: 4.0,
                       minScale: 1.0,
                       child: LayoutBuilder(
@@ -85,81 +482,25 @@ class ManagerMapScreen extends StatelessWidget {
                               // Imagem Real da Planta em Cores
                               Positioned.fill(
                                 child: Image.asset(
-                                  'lib/assets/icons/mapa_planta.png',
+                                  currentStation.imageAsset,
                                   fit: BoxFit.cover,
                                 ),
                               ),
-                              // 1. Ponto Vermelho (Superior Esquerdo)
-                              Positioned(
-                                left: w * 0.12 - 16,
-                                top: h * 0.065 - 16,
-                                child: const _MapCartMarker(
-                                  dotColor: AppTheme.error,
-                                  title: 'Carrinho #12',
-                                  code: 'CR012',
-                                  status: 'Fora da Estação',
-                                  statusColor: AppTheme.error,
-                                  location: 'Hortifrúti • Maçãs',
-                                  time: 'Parado há 18 min',
+                              for (final marker in currentStation.markers)
+                                Positioned(
+                                  left: w * marker.xFactor - 16,
+                                  top: h * marker.yFactor - 16,
+                                  child: _MapCartMarker(
+                                    dotColor: marker.dotColor,
+                                    title: marker.title,
+                                    code: marker.code,
+                                    status: marker.status,
+                                    statusColor: marker.statusColor,
+                                    location: marker.location,
+                                    time: marker.time,
+                                    defect: marker.defect,
+                                  ),
                                 ),
-                              ),
-                              // 2. Ponto Amarelo com Avaria (Superior Direito)
-                              Positioned(
-                                left: w * 0.81 - 16,
-                                top: h * 0.145 - 16,
-                                child: const _MapCartMarker(
-                                  dotColor: AppTheme.warning,
-                                  title: 'Carrinho #07',
-                                  code: 'CR007',
-                                  status: 'Avaria Relatada',
-                                  statusColor: AppTheme.warning,
-                                  location: 'Hortifrúti • Temperos',
-                                  time: 'Parado há 34 min',
-                                  defect: 'Roda dianteira travada',
-                                ),
-                              ),
-                              // 3. Ponto Vermelho (Centro Direito)
-                              Positioned(
-                                left: w * 0.745 - 16,
-                                top: h * 0.485 - 16,
-                                child: const _MapCartMarker(
-                                  dotColor: AppTheme.error,
-                                  title: 'Carrinho #19',
-                                  code: 'CR019',
-                                  status: 'Fora da Estação',
-                                  statusColor: AppTheme.error,
-                                  location: 'Hortifrúti • Balcão',
-                                  time: 'Parado há 9 min',
-                                ),
-                              ),
-                              // 4. Ponto Vermelho (Inferior Esquerdo)
-                              Positioned(
-                                left: w * 0.26 - 16,
-                                top: h * 0.705 - 16,
-                                child: const _MapCartMarker(
-                                  dotColor: AppTheme.error,
-                                  title: 'Carrinho #25',
-                                  code: 'CR025',
-                                  status: 'Fora da Estação',
-                                  statusColor: AppTheme.error,
-                                  location: 'Hortifrúti • Verduras',
-                                  time: 'Parado há 27 min',
-                                ),
-                              ),
-                              // 5. Ponto Vermelho (Inferior Direito)
-                              Positioned(
-                                left: w * 0.835 - 16,
-                                top: h * 0.92 - 16,
-                                child: const _MapCartMarker(
-                                  dotColor: AppTheme.error,
-                                  title: 'Carrinho #31',
-                                  code: 'CR031',
-                                  status: 'Fora da Estação',
-                                  statusColor: AppTheme.error,
-                                  location: 'Hortifrúti • Saída',
-                                  time: 'Parado há 12 min',
-                                ),
-                              ),
                             ],
                           );
                         },
@@ -171,7 +512,7 @@ class ManagerMapScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
 
-            // Linha 1 de Status: 6 Carrinhos fora + 1 Carrinho com avaria
+            // Linha 1 de Status: Carrinhos fora + Carrinho com avaria
             Row(
               children: [
                 Expanded(
@@ -179,7 +520,7 @@ class ManagerMapScreen extends StatelessWidget {
                     icon: Icons.warning_amber_rounded,
                     iconColor: const Color(0xFFEF4444),
                     iconBgColor: const Color(0xFFEF4444).withValues(alpha: 0.18),
-                    title: '6 Carrinhos fora\ndas estações',
+                    title: currentStation.outOfStationTitle,
                     subtitle: 'Espalhados nos\ncorredores de venda',
                   ),
                 ),
@@ -189,7 +530,7 @@ class ManagerMapScreen extends StatelessWidget {
                     icon: Icons.warning_amber_rounded,
                     iconColor: const Color(0xFFF59E0B),
                     iconBgColor: const Color(0xFFF59E0B).withValues(alpha: 0.18),
-                    title: '1 Carrinho com\navaria',
+                    title: currentStation.damagedTitle,
                     subtitle: 'Espalhado no corredor\nde venda',
                   ),
                 ),
@@ -197,7 +538,7 @@ class ManagerMapScreen extends StatelessWidget {
             ),
             const SizedBox(height: 12),
 
-            // Linha 2 de Status: Funcionários ativos (na coluna da esquerda como no mockup)
+            // Linha 2 de Status: Funcionários ativos
             Row(
               children: [
                 Expanded(
@@ -205,8 +546,8 @@ class ManagerMapScreen extends StatelessWidget {
                     icon: Icons.person,
                     iconColor: const Color(0xFF3B82F6),
                     iconBgColor: const Color(0xFF3B82F6).withValues(alpha: 0.18),
-                    title: 'Funcionários\nativos: 40',
-                    subtitle: '6 funcionários com\ncargo para função',
+                    title: currentStation.activeEmployeesTitle,
+                    subtitle: currentStation.activeEmployeesSubtitle,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -219,6 +560,56 @@ class ManagerMapScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+class _StationMapData {
+  final String key;
+  final String name;
+  final String sectorSubtitle;
+  final String imageAsset;
+  final String outOfStationTitle;
+  final String damagedTitle;
+  final String activeEmployeesTitle;
+  final String activeEmployeesSubtitle;
+  final List<_MarkerData> markers;
+
+  const _StationMapData({
+    required this.key,
+    required this.name,
+    required this.sectorSubtitle,
+    required this.imageAsset,
+    required this.outOfStationTitle,
+    required this.damagedTitle,
+    required this.activeEmployeesTitle,
+    required this.activeEmployeesSubtitle,
+    required this.markers,
+  });
+}
+
+class _MarkerData {
+  final double xFactor;
+  final double yFactor;
+  final Color dotColor;
+  final String title;
+  final String code;
+  final String status;
+  final Color statusColor;
+  final String location;
+  final String time;
+  final String? defect;
+
+  const _MarkerData({
+    required this.xFactor,
+    required this.yFactor,
+    required this.dotColor,
+    required this.title,
+    required this.code,
+    required this.status,
+    required this.statusColor,
+    required this.location,
+    required this.time,
+    this.defect,
+  });
 }
 
 class _MapCartMarker extends StatelessWidget {
