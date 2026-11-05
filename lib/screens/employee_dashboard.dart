@@ -61,15 +61,20 @@ class EmployeeDashboard extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Expanded(
-              child: ListView.separated(
-                itemCount: MockDB.stations.length,
-                separatorBuilder: (context, index) => const SizedBox(height: 12),
-                itemBuilder: (context, index) {
-                  final station = MockDB.stations[index];
-                  return _StationCapacityCard(
-                    name: station['name'],
-                    percentage: station['percentage'],
-                    status: station['status'],
+              child: ValueListenableBuilder<int>(
+                valueListenable: MockDB.stateNotifier,
+                builder: (context, _, _) {
+                  return ListView.separated(
+                    itemCount: MockDB.stations.length,
+                    separatorBuilder: (context, index) => const SizedBox(height: 12),
+                    itemBuilder: (context, index) {
+                      final station = MockDB.stations[index];
+                      return _StationCapacityCard(
+                        name: station['name'],
+                        percentage: station['percentage'],
+                        status: station['status'],
+                      );
+                    },
                   );
                 },
               ),
@@ -119,10 +124,16 @@ class _StationCapacityCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
+        final isBasketOnly = name.contains('Cestos') || name.contains('Hortifruti');
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => const EquipmentListScreen(role: 'employee'),
+            builder: (_) => EquipmentListScreen(
+              role: 'employee',
+              stationName: name,
+              initialEquipmentType: isBasketOnly ? 'Cestos' : 'Carrinhos',
+              hasCarrinhos: !isBasketOnly,
+            ),
           ),
         );
       },

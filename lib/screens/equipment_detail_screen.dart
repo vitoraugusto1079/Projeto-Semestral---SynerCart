@@ -4,11 +4,15 @@ import '../core/theme.dart';
 class EquipmentDetailScreen extends StatefulWidget {
   final String role; // 'manager' ou 'employee'
   final int cartNumber;
+  final String stationName;
+  final String equipmentType; // 'Carrinho' ou 'Cesto'
 
   const EquipmentDetailScreen({
     super.key,
     this.role = 'manager',
     this.cartNumber = 1,
+    this.stationName = 'Estação 1 - Entrada',
+    this.equipmentType = 'Carrinho',
   });
 
   @override
@@ -28,7 +32,9 @@ class _EquipmentDetailScreenState extends State<EquipmentDetailScreen> {
     super.initState();
     _status = 'Ativo';
     _problemController = TextEditingController(
-      text: 'Roda dianteira da frente quebrada',
+      text: widget.equipmentType == 'Cesto'
+          ? 'Alça plástica lateral trincada'
+          : 'Roda dianteira da frente quebrada',
     );
   }
 
@@ -69,7 +75,7 @@ class _EquipmentDetailScreenState extends State<EquipmentDetailScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'O gerente foi notificado sobre o problema no Carrinho ${widget.cartNumber} e poderá alterar o status para conserto.',
+              'O gerente foi notificado sobre o problema no ${widget.equipmentType} ${widget.cartNumber} e poderá alterar o status para conserto.',
               textAlign: TextAlign.center,
               style: const TextStyle(color: AppTheme.textSecondary, fontSize: 13),
             ),
@@ -94,7 +100,7 @@ class _EquipmentDetailScreenState extends State<EquipmentDetailScreen> {
   void _saveManagerChanges() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Carrinho ${widget.cartNumber} atualizado para "$_status" com sucesso!'),
+        content: Text('${widget.equipmentType} ${widget.cartNumber} atualizado para "$_status" com sucesso!'),
         backgroundColor: AppTheme.success,
       ),
     );
@@ -104,12 +110,14 @@ class _EquipmentDetailScreenState extends State<EquipmentDetailScreen> {
   @override
   Widget build(BuildContext context) {
     final isEmployee = widget.role == 'employee';
+    final codePrefix = widget.equipmentType == 'Cesto' ? 'CS' : 'CR';
+    final formattedId = '$codePrefix${widget.cartNumber.toString().padLeft(3, '0')}';
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Text('Equipamento - Carrinho ${widget.cartNumber}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        title: Text('Equipamento - ${widget.equipmentType} ${widget.cartNumber}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -131,9 +139,9 @@ class _EquipmentDetailScreenState extends State<EquipmentDetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Carrinho ${widget.cartNumber}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  Text('${widget.equipmentType} ${widget.cartNumber}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                   const SizedBox(height: 4),
-                  Text('Estação 1 - Entrada', style: TextStyle(color: AppTheme.textSecondary.withValues(alpha: 0.8), fontSize: 12)),
+                  Text(widget.stationName, style: TextStyle(color: AppTheme.textSecondary.withValues(alpha: 0.8), fontSize: 12)),
                 ],
               ),
             ),
@@ -149,13 +157,13 @@ class _EquipmentDetailScreenState extends State<EquipmentDetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildReadOnlyField('ID do Equipamento:', 'CR00${widget.cartNumber}'),
+                  _buildReadOnlyField('ID do Equipamento:', formattedId),
                   const SizedBox(height: 16),
                   _buildReadOnlyField('Data de Cadastro:', '24/02/2026'),
                   const SizedBox(height: 16),
-                  _buildReadOnlyField('Estação pertencente:', 'Estação 4 - Saída'),
+                  _buildReadOnlyField('Estação pertencente:', widget.stationName),
                   const SizedBox(height: 16),
-                  _buildReadOnlyField('Localização:', 'Registrado na baia da Saída, há 12 minutos'),
+                  _buildReadOnlyField('Localização:', 'Registrado na baia de ${widget.stationName}, há 12 minutos'),
                   const SizedBox(height: 16),
 
                   // Status do Equipamento

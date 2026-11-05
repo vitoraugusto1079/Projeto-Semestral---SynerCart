@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import '../core/theme.dart';
+import '../core/mock_db.dart';
 
 class TaskDetailScreen extends StatelessWidget {
-  const TaskDetailScreen({super.key});
+  final TaskItemModel? task;
+
+  const TaskDetailScreen({super.key, this.task});
 
   @override
   Widget build(BuildContext context) {
+    final currentTask = task ?? MockDB.tasks.first;
+
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -31,7 +36,12 @@ class TaskDetailScreen extends StatelessWidget {
                   const Icon(Icons.circle, color: AppTheme.error, size: 10),
                   const SizedBox(width: 8),
                   const Text('Retirar de: ', style: TextStyle(color: AppTheme.textSecondary, fontSize: 14)),
-                  const Text('Saída B', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                  Expanded(
+                    child: Text(
+                      currentTask.fromLocation,
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    ),
+                  ),
                 ],
               ),
               Container(
@@ -44,17 +54,28 @@ class TaskDetailScreen extends StatelessWidget {
                   const Icon(Icons.circle, color: AppTheme.success, size: 10),
                   const SizedBox(width: 8),
                   const Text('Levar para: ', style: TextStyle(color: AppTheme.textSecondary, fontSize: 14)),
-                  const Text('Entrada Principal', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                  Expanded(
+                    child: Text(
+                      currentTask.toLocation,
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    ),
+                  ),
                 ],
               ),
               const SizedBox(height: 24),
               
-              const Text('Quantidade Necessária: 15 Carrinhos', style: TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
+              Text(currentTask.quantityText, style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
               const SizedBox(height: 4),
-              const Text('Prioridade Máxima', style: TextStyle(color: AppTheme.warning, fontSize: 12, fontWeight: FontWeight.bold)),
+              Text(
+                currentTask.priorityText,
+                style: const TextStyle(color: AppTheme.warning, fontSize: 12, fontWeight: FontWeight.bold),
+              ),
               
               const SizedBox(height: 32),
-              const Text('ROTA SUGERIDA INTERNA', style: TextStyle(color: AppTheme.textSecondary, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1)),
+              const Text(
+                'ROTA SUGERIDA INTERNA',
+                style: TextStyle(color: AppTheme.textSecondary, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1),
+              ),
               const SizedBox(height: 12),
               
               // Simulação do Mapa Interno de Rota
@@ -68,37 +89,49 @@ class TaskDetailScreen extends StatelessWidget {
                 child: Stack(
                   children: [
                     Center(
-                      child: Text('Corredor', style: TextStyle(color: AppTheme.textSecondary.withOpacity(0.5))),
+                      child: Text(
+                        currentTask.corridorLabel,
+                        style: TextStyle(color: AppTheme.textSecondary.withValues(alpha: 0.5)),
+                      ),
                     ),
-                    // Saída B
+                    // Origem
                     Positioned(
                       top: 16,
                       right: 16,
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         color: AppTheme.surface,
-                        child: const Text('SAÍDA B', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                        child: Text(
+                          currentTask.fromLocation.toUpperCase(),
+                          style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ),
-                    // Entrada
+                    // Destino
                     Positioned(
                       bottom: 16,
                       left: 16,
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(border: Border.all(color: AppTheme.success)),
-                        child: const Text('ENTRADA', style: TextStyle(color: AppTheme.success, fontSize: 10, fontWeight: FontWeight.bold)),
+                        child: Text(
+                          currentTask.toLocation.toUpperCase(),
+                          style: const TextStyle(color: AppTheme.success, fontSize: 10, fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ),
-                    // Trilha pontilhada amarela (Simulada)
-                    const Positioned(
+                    // Tempo estimado
+                    Positioned(
                       bottom: 16,
                       right: 16,
                       child: Row(
                         children: [
-                          Icon(Icons.timer_outlined, color: AppTheme.warning, size: 14),
-                          SizedBox(width: 4),
-                          Text('~4 min est.', style: TextStyle(color: AppTheme.warning, fontSize: 10, fontWeight: FontWeight.bold)),
+                          const Icon(Icons.timer_outlined, color: AppTheme.warning, size: 14),
+                          const SizedBox(width: 4),
+                          Text(
+                            currentTask.estimatedTime,
+                            style: const TextStyle(color: AppTheme.warning, fontSize: 10, fontWeight: FontWeight.bold),
+                          ),
                         ],
                       ),
                     ),
@@ -109,6 +142,7 @@ class TaskDetailScreen extends StatelessWidget {
               
               ElevatedButton(
                 onPressed: () {
+                  MockDB.resolveTask(currentTask.id);
                   showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
@@ -120,9 +154,16 @@ class TaskDetailScreen extends StatelessWidget {
                         children: [
                           const Icon(Icons.check_circle, color: AppTheme.success, size: 60),
                           const SizedBox(height: 16),
-                          const Text('Tarefa Aceita!', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textPrimary)),
+                          const Text(
+                            'Tarefa Concluída!',
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
+                          ),
                           const SizedBox(height: 8),
-                          const Text('Essa rota foi atribuída a você com sucesso.', textAlign: TextAlign.center, style: TextStyle(color: AppTheme.textSecondary, fontSize: 14)),
+                          Text(
+                            'A reposição em "${currentTask.title}" foi registrada como resolvida e contabilizada no seu turno.',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(color: AppTheme.textSecondary, fontSize: 14),
+                          ),
                           const SizedBox(height: 24),
                           SizedBox(
                             width: double.infinity,
@@ -140,7 +181,7 @@ class TaskDetailScreen extends StatelessWidget {
                     ),
                   );
                 },
-                child: const Text('Aceitar tarefa'),
+                child: const Text('Aceitar e concluir tarefa'),
               ),
               const SizedBox(height: 12),
               SizedBox(

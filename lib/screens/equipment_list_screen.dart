@@ -1,18 +1,49 @@
 import 'package:flutter/material.dart';
 import '../core/theme.dart';
 import 'equipment_detail_screen.dart';
+import 'equipment_registration_screen.dart';
 
-class EquipmentListScreen extends StatelessWidget {
+class EquipmentListScreen extends StatefulWidget {
   final String role; // 'manager' ou 'employee'
-  const EquipmentListScreen({super.key, this.role = 'manager'});
+  final String stationName;
+  final String initialEquipmentType; // 'Carrinhos' ou 'Cestos'
+  final bool hasCarrinhos;
+
+  const EquipmentListScreen({
+    super.key,
+    this.role = 'manager',
+    this.stationName = 'Estação 1 - Entrada',
+    this.initialEquipmentType = 'Carrinhos',
+    this.hasCarrinhos = true,
+  });
+
+  @override
+  State<EquipmentListScreen> createState() => _EquipmentListScreenState();
+}
+
+class _EquipmentListScreenState extends State<EquipmentListScreen> {
+  late String _selectedType;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedType = widget.hasCarrinhos ? widget.initialEquipmentType : 'Cestos';
+  }
 
   @override
   Widget build(BuildContext context) {
+    final isCestos = _selectedType == 'Cestos';
+    final itemCount = isCestos ? 20 : 28;
+    final singularLabel = isCestos ? 'Cesto' : 'Carrinho';
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const Text('Equipamentos', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        title: Text(
+          'Equipamentos • $_selectedType',
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -33,19 +64,44 @@ class EquipmentListScreen extends StatelessWidget {
                 children: [
                   const Icon(Icons.store, color: AppTheme.primary, size: 32),
                   const SizedBox(width: 16),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text('Unidade 7', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                      Text('Estação 1 - Entrada', style: TextStyle(color: AppTheme.textSecondary.withValues(alpha: 0.8), fontSize: 12)),
-                    ],
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('Unidade 7', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                        Text(
+                          widget.stationName,
+                          style: TextStyle(color: AppTheme.textSecondary.withValues(alpha: 0.8), fontSize: 12),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
+
+            // Pílulas de alternância entre Cestos e Carrinhos
+            Row(
+              children: [
+                _buildTypeFilterPill(
+                  label: 'Cestos (20)',
+                  type: 'Cestos',
+                  icon: Icons.shopping_basket_outlined,
+                ),
+                if (widget.hasCarrinhos) ...[
+                  const SizedBox(width: 10),
+                  _buildTypeFilterPill(
+                    label: 'Carrinhos (28)',
+                    type: 'Carrinhos',
+                    icon: Icons.shopping_cart_outlined,
+                  ),
+                ],
+              ],
+            ),
+            const SizedBox(height: 20),
             
-            // Grid de Carrinhos
+            // Grid de Equipamentos (Carrinhos ou Cestos)
             GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -55,22 +111,25 @@ class EquipmentListScreen extends StatelessWidget {
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
               ),
-              itemCount: 28,
+              itemCount: itemCount,
               itemBuilder: (context, index) {
+                final itemNumber = index + 1;
                 return GestureDetector(
                   onTap: () {
                     Navigator.push(
                       context, 
                       MaterialPageRoute(
                         builder: (_) => EquipmentDetailScreen(
-                          role: role,
-                          cartNumber: index + 1,
+                          role: widget.role,
+                          cartNumber: itemNumber,
+                          stationName: widget.stationName,
+                          equipmentType: singularLabel,
                         ),
                       ),
                     );
                   },
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 14),
                     decoration: BoxDecoration(
                       color: AppTheme.surface,
                       borderRadius: BorderRadius.circular(8),
@@ -78,7 +137,17 @@ class EquipmentListScreen extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Carrinho ${index + 1}', style: const TextStyle(fontSize: 12)),
+                        Row(
+                          children: [
+                            Icon(
+                              isCestos ? Icons.shopping_basket_outlined : Icons.shopping_cart_outlined,
+                              size: 14,
+                              color: AppTheme.primary,
+                            ),
+                            const SizedBox(width: 8),
+                            Text('$singularLabel $itemNumber', style: const TextStyle(fontSize: 12)),
+                          ],
+                        ),
                         const Icon(Icons.chevron_right, color: AppTheme.textSecondary, size: 16),
                       ],
                     ),
@@ -87,14 +156,63 @@ class EquipmentListScreen extends StatelessWidget {
               },
             ),
             
-            if (role != 'employee') ...[
+            if (widget.role != 'employee') ...[
               const SizedBox(height: 24),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const EquipmentRegistrationScreen()),
+                  );
+                },
                 child: const Text('Adicionar equipamento +'),
               ),
             ],
             const SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTypeFilterPill({
+    required String label,
+    required String type,
+    required IconData icon,
+  }) {
+    final isSelected = _selectedType == type;
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedType = type;
+        });
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? AppTheme.primary.withValues(alpha: 0.18) : AppTheme.surface,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: isSelected ? AppTheme.primary : AppTheme.textSecondary.withValues(alpha: 0.2),
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              size: 15,
+              color: isSelected ? AppTheme.primary : AppTheme.textSecondary,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                color: isSelected ? AppTheme.primary : AppTheme.textPrimary,
+              ),
+            ),
           ],
         ),
       ),

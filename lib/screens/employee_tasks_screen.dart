@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/theme.dart';
+import '../core/mock_db.dart';
 import 'task_detail_screen.dart';
 
 class EmployeeTasksScreen extends StatelessWidget {
@@ -15,145 +16,153 @@ class EmployeeTasksScreen extends StatelessWidget {
         title: const Text('Tarefas não resolvidas', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Banner de Atenção no Topo
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppTheme.surface,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: const Color(0xFFEF4444).withValues(alpha: 0.45),
-                  width: 1.2,
-                ),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 44,
-                    height: 44,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFEF4444),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Center(
-                      child: Icon(
-                        Icons.warning_amber_rounded,
-                        color: Colors.white,
-                        size: 24,
-                      ),
+      body: ValueListenableBuilder<int>(
+        valueListenable: MockDB.stateNotifier,
+        builder: (context, _, _) {
+          final pendingTasks = MockDB.tasks.where((t) => !t.isResolved).toList();
+          final resolvedTasks = MockDB.tasks.where((t) => t.isResolved).toList();
+          final allResolved = pendingTasks.isEmpty;
+
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Banner de Atenção / Status no Topo
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: AppTheme.surface,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: (allResolved ? AppTheme.success : const Color(0xFFEF4444)).withValues(alpha: 0.45),
+                      width: 1.2,
                     ),
                   ),
-                  const SizedBox(width: 16),
-                  const Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Atenção!',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: allResolved ? AppTheme.success : const Color(0xFFEF4444),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Center(
+                          child: Icon(
+                            allResolved ? Icons.check_circle_outline : Icons.warning_amber_rounded,
                             color: Colors.white,
+                            size: 24,
                           ),
                         ),
-                        SizedBox(height: 3),
-                        Text(
-                          '3 pontos de coleta abaixo do mínimo',
-                          style: TextStyle(
-                            color: AppTheme.textSecondary,
-                            fontSize: 12,
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              allResolved ? 'Tudo em dia!' : 'Atenção!',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(height: 3),
+                            Text(
+                              allResolved
+                                  ? 'Todos os pontos de coleta foram normalizados'
+                                  : '${pendingTasks.length} ${pendingTasks.length == 1 ? "ponto de coleta abaixo do mínimo" : "pontos de coleta abaixo do mínimo"}',
+                              style: const TextStyle(
+                                color: AppTheme.textSecondary,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                const Text(
+                  'Alertas Ativos',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white),
+                ),
+                const SizedBox(height: 14),
+
+                if (pendingTasks.isEmpty)
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: AppTheme.surface,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.verified_outlined, color: AppTheme.success, size: 22),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'Nenhuma tarefa pendente no momento.',
+                            style: TextStyle(color: AppTheme.textSecondary, fontSize: 13),
                           ),
                         ),
                       ],
                     ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
+                  )
+                else
+                  ...pendingTasks.map((task) {
+                    final isCritical = task.status == 'critical';
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 14),
+                      child: _TaskCard(
+                        title: task.title,
+                        subtitle: task.subtitle,
+                        timeText: task.timeText,
+                        tagText: isCritical ? 'CRÍTICO' : 'ATENÇÃO',
+                        tagColor: isCritical ? const Color(0xFFEF4444) : const Color(0xFFF59E0B),
+                        tagBgColor: isCritical ? const Color(0xFF3F1D24) : const Color(0xFF382A12),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => TaskDetailScreen(task: task)),
+                          );
+                        },
+                      ),
+                    );
+                  }),
 
-            const Text(
-              'Alertas Ativos',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white),
-            ),
-            const SizedBox(height: 14),
+                const SizedBox(height: 10),
+                const Text(
+                  'Histórico Recente',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white),
+                ),
+                const SizedBox(height: 14),
 
-            // Task 1 - Entrada Principal
-            _TaskCard(
-              title: 'Entrada Principal',
-              subtitle: 'Carrinhos: 2/20 disponíveis',
-              timeText: 'Há 15 min',
-              tagText: 'CRÍTICO',
-              tagColor: const Color(0xFFEF4444),
-              tagBgColor: const Color(0xFF3F1D24),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const TaskDetailScreen()),
-                );
-              },
+                ...resolvedTasks.map((task) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 14),
+                    child: _TaskCard(
+                      title: task.title,
+                      subtitle: task.resolvedSubtitle,
+                      timeText: task.timeText,
+                      tagText: 'RESOLVIDO',
+                      tagColor: const Color(0xFF10B981),
+                      tagBgColor: const Color(0xFF0F3528),
+                      showButton: false,
+                      onTap: () {},
+                    ),
+                  );
+                }),
+                const SizedBox(height: 16),
+              ],
             ),
-            const SizedBox(height: 14),
-
-            // Task 2 - Setor Hortifruti
-            _TaskCard(
-              title: 'Setor Hortifruti',
-              subtitle: 'Cestos: 0/15 disponíveis',
-              timeText: 'Há 8 min',
-              tagText: 'CRÍTICO',
-              tagColor: const Color(0xFFEF4444),
-              tagBgColor: const Color(0xFF3F1D24),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const TaskDetailScreen()),
-                );
-              },
-            ),
-            const SizedBox(height: 14),
-
-            // Task 3 - Estacionamento Norte
-            _TaskCard(
-              title: 'Estacionamento Norte',
-              subtitle: 'Carrinhos: 5/25 disponíveis',
-              timeText: 'Há 22 min',
-              tagText: 'ATENÇÃO',
-              tagColor: const Color(0xFFF59E0B),
-              tagBgColor: const Color(0xFF382A12),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const TaskDetailScreen()),
-                );
-              },
-            ),
-
-            const SizedBox(height: 24),
-            const Text(
-              'Histórico Recente',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white),
-            ),
-            const SizedBox(height: 14),
-
-            // Task 4 - Histórico Resolvido (Corredor 7)
-            _TaskCard(
-              title: 'Corredor 7',
-              subtitle: 'Cestos repostos — 12 unidades',
-              timeText: 'Resolvido há 1h',
-              tagText: 'RESOLVIDO',
-              tagColor: const Color(0xFF10B981),
-              tagBgColor: const Color(0xFF0F3528),
-              showButton: false,
-              onTap: () {},
-            ),
-            const SizedBox(height: 16),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
