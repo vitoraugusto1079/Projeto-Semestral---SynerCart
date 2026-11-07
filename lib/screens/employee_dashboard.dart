@@ -56,7 +56,49 @@ class EmployeeDashboard extends StatelessWidget {
                   'CAPACIDADE DAS ESTAÇÕES',
                   style: TextStyle(color: AppTheme.textSecondary, fontSize: 12, fontWeight: FontWeight.bold),
                 ),
-                Icon(Icons.refresh, color: AppTheme.textSecondary, size: 18),
+                InkWell(
+                  borderRadius: BorderRadius.circular(20),
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        backgroundColor: AppTheme.surface,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        contentPadding: const EdgeInsets.all(24),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.check_circle, color: AppTheme.success, size: 60),
+                            const SizedBox(height: 16),
+                            const Text(
+                              'Dados Atualizados!',
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
+                            ),
+                            const SizedBox(height: 8),
+                            const Text(
+                              'A capacidade de todas as estações foi sincronizada em tempo real.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: AppTheme.textSecondary, fontSize: 14),
+                            ),
+                            const SizedBox(height: 24),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(backgroundColor: AppTheme.success),
+                                onPressed: () => Navigator.pop(context),
+                                child: const Text('Continuar'),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                  child: const Padding(
+                    padding: EdgeInsets.all(4.0),
+                    child: Icon(Icons.refresh, color: AppTheme.textSecondary, size: 18),
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 16),

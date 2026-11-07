@@ -85,9 +85,43 @@ class _StationRegistrationScreenState extends State<StationRegistrationScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    // Feedback visual e volta
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Estação cadastrada com sucesso!'), backgroundColor: AppTheme.success));
-                    Navigator.pop(context);
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        backgroundColor: AppTheme.surface,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        contentPadding: const EdgeInsets.all(24),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.check_circle, color: AppTheme.success, size: 60),
+                            const SizedBox(height: 16),
+                            const Text(
+                              'Estação Cadastrada!',
+                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
+                            ),
+                            const SizedBox(height: 8),
+                            const Text(
+                              'A nova estação foi adicionada à unidade com sucesso.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: AppTheme.textSecondary, fontSize: 14),
+                            ),
+                            const SizedBox(height: 24),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(backgroundColor: AppTheme.success),
+                                onPressed: () {
+                                  Navigator.pop(context); // fecha dialog
+                                  Navigator.pop(context); // volta para lista
+                                },
+                                child: const Text('Continuar'),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppTheme.primary,

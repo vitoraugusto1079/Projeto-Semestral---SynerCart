@@ -98,13 +98,43 @@ class _EquipmentDetailScreenState extends State<EquipmentDetailScreen> {
   }
 
   void _saveManagerChanges() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('${widget.equipmentType} ${widget.cartNumber} atualizado para "$_status" com sucesso!'),
-        backgroundColor: AppTheme.success,
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppTheme.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        contentPadding: const EdgeInsets.all(24),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.check_circle, color: AppTheme.success, size: 60),
+            const SizedBox(height: 16),
+            const Text(
+              'Status Atualizado!',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'O ${widget.equipmentType} ${widget.cartNumber} teve seu status alterado para "$_status" com sucesso.',
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: AppTheme.textSecondary, fontSize: 13),
+            ),
+            const SizedBox(height: 24),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(backgroundColor: AppTheme.success),
+                onPressed: () {
+                  Navigator.pop(context); // fecha dialog
+                  Navigator.pop(context); // volta para a lista
+                },
+                child: const Text('Continuar'),
+              ),
+            ),
+          ],
+        ),
       ),
     );
-    Navigator.pop(context);
   }
 
   @override
@@ -281,11 +311,48 @@ class _EquipmentDetailScreenState extends State<EquipmentDetailScreen> {
                         setState(() {
                           _hasPhotoAttached = !_hasPhotoAttached;
                         });
-                        if (_hasPhotoAttached) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Foto da avaria anexada com sucesso!'), duration: Duration(seconds: 1)),
-                          );
-                        }
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            backgroundColor: AppTheme.surface,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                            contentPadding: const EdgeInsets.all(24),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  _hasPhotoAttached ? Icons.check_circle : Icons.info_outline,
+                                  color: _hasPhotoAttached ? AppTheme.success : AppTheme.warning,
+                                  size: 60,
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  _hasPhotoAttached ? 'Foto Anexada!' : 'Foto Removida',
+                                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  _hasPhotoAttached
+                                      ? 'A imagem da avaria foi carregada e vinculada ao chamado com sucesso.'
+                                      : 'A imagem anexada foi removida deste relato.',
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(color: AppTheme.textSecondary, fontSize: 13),
+                                ),
+                                const SizedBox(height: 24),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: _hasPhotoAttached ? AppTheme.success : AppTheme.primary,
+                                    ),
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text('Continuar'),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
                       },
                       child: Container(
                         padding: const EdgeInsets.all(16),

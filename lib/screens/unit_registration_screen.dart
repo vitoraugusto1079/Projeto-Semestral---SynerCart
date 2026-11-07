@@ -65,14 +65,52 @@ class UnitRegistrationScreen extends StatelessWidget {
               const SizedBox(height: 40),
 
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      backgroundColor: AppTheme.surface,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      contentPadding: const EdgeInsets.all(24),
+                      content: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.check_circle, color: AppTheme.success, size: 60),
+                          const SizedBox(height: 16),
+                          const Text(
+                            'Unidade Cadastrada!',
+                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
+                          ),
+                          const SizedBox(height: 8),
+                          const Text(
+                            'A nova filial foi salva no sistema com sucesso.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: AppTheme.textSecondary, fontSize: 14),
+                          ),
+                          const SizedBox(height: 24),
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(backgroundColor: AppTheme.success),
+                              onPressed: () {
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                              },
+                              child: const Text('Continuar'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
                 child: const Text('Salvar Unidade'),
               ),
               const SizedBox(height: 12),
               SizedBox(
                 width: double.infinity,
                 child: TextButton(
-                  onPressed: () {},
+                  onPressed: () => Navigator.pop(context),
                   style: TextButton.styleFrom(
                     backgroundColor: Colors.transparent,
                     foregroundColor: AppTheme.textPrimary,
