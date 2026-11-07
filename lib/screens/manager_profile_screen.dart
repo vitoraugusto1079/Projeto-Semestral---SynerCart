@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../core/theme.dart';
+import '../core/weekly_report_service.dart';
 import 'role_selection_screen.dart';
 import 'edit_profile_screen.dart';
 
@@ -175,10 +176,13 @@ class _ManagerProfileScreenState extends State<ManagerProfileScreen> {
             
             // Baixar relatório semanal / Arquivo baixado com sucesso!
             GestureDetector(
-              onTap: () {
+              onTap: () async {
+                final savedLocation = await WeeklyReportService.generateAndDownloadWeeklyReport();
+                if (!mounted) return;
                 setState(() {
                   _reportDownloaded = true;
                 });
+                if (!context.mounted) return;
                 showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
@@ -195,10 +199,10 @@ class _ManagerProfileScreenState extends State<ManagerProfileScreen> {
                           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
                         ),
                         const SizedBox(height: 8),
-                        const Text(
-                          'O relatório semanal em PDF foi gerado e salvo no seu dispositivo com sucesso.',
+                        Text(
+                          'O relatório semanal em PDF foi gerado e salvo com sucesso:\n$savedLocation',
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: AppTheme.textSecondary, fontSize: 14),
+                          style: const TextStyle(color: AppTheme.textSecondary, fontSize: 13),
                         ),
                         const SizedBox(height: 24),
                         SizedBox(
