@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/theme.dart';
+import '../core/mock_db.dart';
 
 class EquipmentDetailScreen extends StatefulWidget {
   final String role; // 'manager' ou 'employee'
@@ -20,7 +21,10 @@ class EquipmentDetailScreen extends StatefulWidget {
 }
 
 class _EquipmentDetailScreenState extends State<EquipmentDetailScreen> {
+  late String _formattedId;
   late String _status;
+  late List<DefectTypeModel> _availableDefects;
+  late DefectTypeModel _selectedDefect;
   late TextEditingController _problemController;
   bool _hasPhotoAttached = false;
   bool _isHistoryExpanded = false;
@@ -30,11 +34,26 @@ class _EquipmentDetailScreenState extends State<EquipmentDetailScreen> {
   @override
   void initState() {
     super.initState();
-    _status = 'Ativo';
+    final codePrefix = widget.equipmentType == 'Cesto' ? 'CS' : 'CR';
+    _formattedId = '$codePrefix${widget.cartNumber.toString().padLeft(3, '0')}';
+    _availableDefects = MockDB.getDefectsForType(widget.equipmentType);
+
+    final record = MockDB.getEquipmentRecord(_formattedId, widget.equipmentType, widget.stationName);
+    _status = record['status'] as String;
+    final savedDefectId = record['defectId'] as String?;
+    _selectedDefect = _availableDefects.firstWhere(
+      (d) => d.id == savedDefectId,
+      orElse: () => _availableDefects.first,
+    );
+    _hasPhotoAttached = record['hasPhoto'] as bool? ?? false;
+
+    final savedNotes = record['notes'] as String? ?? '';
     _problemController = TextEditingController(
-      text: widget.equipmentType == 'Cesto'
-          ? 'Alça plástica lateral trincada'
-          : 'Roda dianteira da frente quebrada',
+      text: savedNotes.isNotEmpty
+          ? savedNotes
+          : (widget.equipmentType == 'Cesto'
+              ? 'Identificado durante ronda preventiva no corredor'
+              : 'Identificado durante recolha na baia da estação'),
     );
   }
 
@@ -58,6 +77,15 @@ class _EquipmentDetailScreenState extends State<EquipmentDetailScreen> {
   }
 
   void _submitEmployeeReport() {
+    MockDB.reportEquipmentDefect(
+      code: _formattedId,
+      equipmentType: widget.equipmentType,
+      stationName: widget.stationName,
+      defect: _selectedDefect,
+      notes: _problemController.text,
+      hasPhoto: _hasPhotoAttached,
+    );
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -75,7 +103,7 @@ class _EquipmentDetailScreenState extends State<EquipmentDetailScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'O gerente foi notificado sobre o problema no ${widget.equipmentType} ${widget.cartNumber} e poderá alterar o status para conserto.',
+              'A avaria "${_selectedDefect.name}" (Custo estimado: ${_selectedDefect.formattedCost}) no ${widget.equipmentType} ${widget.cartNumber} foi enviada para a gerência e adicionada ao relatório de manutenção.',
               textAlign: TextAlign.center,
               style: const TextStyle(color: AppTheme.textSecondary, fontSize: 13),
             ),
@@ -98,6 +126,14 @@ class _EquipmentDetailScreenState extends State<EquipmentDetailScreen> {
   }
 
   void _saveManagerChanges() {
+    MockDB.updateEquipmentStatus(
+      code: _formattedId,
+      equipmentType: widget.equipmentType,
+      stationName: widget.stationName,
+      newStatus: _status,
+      defect: _selectedDefect,
+    );
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -115,7 +151,7 @@ class _EquipmentDetailScreenState extends State<EquipmentDetailScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'O ${widget.equipmentType} ${widget.cartNumber} teve seu status alterado para "$_status" com sucesso.',
+              'O ${widget.equipmentType} ${widget.cartNumber} teve seu status alterado para "$_status" (Orçamento: ${_selectedDefect.formattedCost}) com sucesso.',
               textAlign: TextAlign.center,
               style: const TextStyle(color: AppTheme.textSecondary, fontSize: 13),
             ),
@@ -264,8 +300,117 @@ class _EquipmentDetailScreenState extends State<EquipmentDetailScreen> {
                     ),
                   const SizedBox(height: 16),
 
-                  // Problemas do Equipamento
-                  const Text('Problemas do Equipamento:', style: TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
+                  // Tipologia da Avaria e Custo de Manutenção
+                  const Text('Tipologia da Avaria (Catálogo):', style: TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
+                  const SizedBox(height: 8),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    decoration: BoxDecoration(
+                      color: AppTheme.background,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: _selectedDefect.id,
+                        isExpanded: true,
+                        dropdownColor: AppTheme.surface,
+                        icon: const Icon(Icons.arrow_drop_down, color: AppTheme.textPrimary),
+                        items: _availableDefects.map((defect) {
+                          return DropdownMenuItem<String>(
+                            value: defect.id,
+                            child: Row(
+                              children: [
+                                const Icon(Icons.build_circle_outlined, color: AppTheme.warning, size: 16),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    defect.name,
+                                    style: const TextStyle(color: AppTheme.textPrimary, fontSize: 13),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  defect.formattedCost,
+                                  style: const TextStyle(
+                                    color: AppTheme.warning,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (newDefectId) {
+                          if (newDefectId != null) {
+                            setState(() {
+                              _selectedDefect = _availableDefects.firstWhere((d) => d.id == newDefectId);
+                            });
+                          }
+                        },
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Card de Custo Estimado de Reparo e SLA
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: AppTheme.warning.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: AppTheme.warning.withValues(alpha: 0.3)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Categoria: ${_selectedDefect.category}',
+                                style: const TextStyle(
+                                  color: AppTheme.textPrimary,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                'SLA estimado: ${_selectedDefect.slaTime}',
+                                style: const TextStyle(color: AppTheme.textSecondary, fontSize: 11),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            const Text(
+                              'Custo de Reparo',
+                              style: TextStyle(color: AppTheme.textSecondary, fontSize: 10),
+                            ),
+                            Text(
+                              _selectedDefect.formattedCost,
+                              style: const TextStyle(
+                                color: AppTheme.warning,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Observações da Avaria
+                  const Text('Observações Adicionais:', style: TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
                   const SizedBox(height: 8),
                   if (isEmployee)
                     // Funcionário pode digitar/editar o relato da avaria
@@ -276,14 +421,14 @@ class _EquipmentDetailScreenState extends State<EquipmentDetailScreen> {
                       decoration: InputDecoration(
                         filled: true,
                         fillColor: AppTheme.background,
-                        hintText: 'Descreva a avaria encontrada...',
+                        hintText: 'Descreva detalhes adicionais da avaria...',
                         hintStyle: const TextStyle(color: AppTheme.textSecondary, fontSize: 12),
                         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
                         contentPadding: const EdgeInsets.all(12),
                       ),
                     )
                   else
-                    // Gerente vê a avaria reportada
+                    // Gerente vê a observação reportada
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.all(12),
@@ -292,7 +437,7 @@ class _EquipmentDetailScreenState extends State<EquipmentDetailScreen> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
-                        _problemController.text.isNotEmpty ? _problemController.text : 'Nenhuma avaria reportada',
+                        _problemController.text.isNotEmpty ? _problemController.text : 'Nenhuma observação adicional',
                         style: const TextStyle(fontSize: 14),
                       ),
                     ),

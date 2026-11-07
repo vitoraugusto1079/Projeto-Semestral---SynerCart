@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/theme.dart';
+import '../core/mock_db.dart';
 
 class ManagerDashboard extends StatefulWidget {
   const ManagerDashboard({super.key});
@@ -317,6 +318,114 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
               value: currentDay.tarefasCriticas,
               pillText: currentDay.tarefasPillText,
               pillColor: currentDay.tarefasPillColor,
+            ),
+            const SizedBox(height: 16),
+
+            // Card Tipologia das Avarias & Custo de Manutenção (Dinâmico com MockDB)
+            ValueListenableBuilder<int>(
+              valueListenable: MockDB.stateNotifier,
+              builder: (context, _, _) {
+                final breakdown = MockDB.maintenanceBreakdownByCategory;
+                final totalLogs = MockDB.maintenanceLogs.length;
+
+                return Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: AppTheme.surface,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Tipologia de Avarias & Manutenção',
+                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                                ),
+                                SizedBox(height: 2),
+                                Text(
+                                  'Custos estimados por categoria de defeito na semana',
+                                  style: TextStyle(color: AppTheme.textSecondary, fontSize: 11),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: AppTheme.warning.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: AppTheme.warning.withValues(alpha: 0.35)),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                const Text(
+                                  'Custo Acumulado',
+                                  style: TextStyle(color: AppTheme.textSecondary, fontSize: 9),
+                                ),
+                                Text(
+                                  MockDB.formattedTotalMaintenanceCost,
+                                  style: const TextStyle(
+                                    color: AppTheme.warning,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      ...breakdown.entries.map((entry) {
+                        final count = entry.value['count'] as int;
+                        final cost = entry.value['cost'] as double;
+                        final formattedCost = 'R\$ ${cost.toStringAsFixed(2).replaceAll('.', ',')}';
+                        final ratio = totalLogs > 0 ? (count / totalLogs).clamp(0.0, 1.0) : 0.0;
+
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    entry.key,
+                                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppTheme.textPrimary),
+                                  ),
+                                  Text(
+                                    '$count ${count == 1 ? "ocorrência" : "ocorrências"} • $formattedCost',
+                                    style: const TextStyle(fontSize: 11, color: AppTheme.textSecondary, fontWeight: FontWeight.w500),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 6),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(4),
+                                child: LinearProgressIndicator(
+                                  value: ratio,
+                                  minHeight: 6,
+                                  backgroundColor: AppTheme.background,
+                                  valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.primary),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
+                    ],
+                  ),
+                );
+              },
             ),
           ],
         ),

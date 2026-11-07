@@ -56,6 +56,26 @@ import 'package:flutter/foundation.dart';
 =========================================
 */
 
+class DefectTypeModel {
+  final String id;
+  final String name;
+  final String equipmentType; // 'Carrinho' ou 'Cesto'
+  final double repairCost;
+  final String category; // 'Rodízios / Rodas', 'Estrutura / Solda', 'Manopla / Alças', 'Sistema Antifurto'
+  final String slaTime;
+
+  const DefectTypeModel({
+    required this.id,
+    required this.name,
+    required this.equipmentType,
+    required this.repairCost,
+    required this.category,
+    required this.slaTime,
+  });
+
+  String get formattedCost => 'R\$ ${repairCost.toStringAsFixed(2).replaceAll('.', ',')}';
+}
+
 class TaskItemModel {
   final String id;
   final String title;
@@ -115,6 +135,259 @@ class MockDB {
     {"name": "Estação 3 - Hortifruti", "status": "alert", "percentage": 45},
     {"name": "Estação 4 - Padaria", "status": "stable", "percentage": 91},
   ];
+
+  // Catálogo pré-cadastrado de Tipologia de Avarias e Custos de Reparo
+  static const List<DefectTypeModel> defectCatalog = [
+    // Carrinhos
+    DefectTypeModel(
+      id: 'def_cart_wheel',
+      name: 'Roda dianteira travada ou quebrada',
+      equipmentType: 'Carrinho',
+      repairCost: 45.00,
+      category: 'Rodízios / Rodas',
+      slaTime: '2h (Oficina Interna)',
+    ),
+    DefectTypeModel(
+      id: 'def_cart_frame',
+      name: 'Grade lateral ou estrutura amassada (Solda)',
+      equipmentType: 'Carrinho',
+      repairCost: 85.00,
+      category: 'Estrutura / Solda',
+      slaTime: '4h (Serralheria)',
+    ),
+    DefectTypeModel(
+      id: 'def_cart_handle',
+      name: 'Manopla / Barra de direção solta',
+      equipmentType: 'Carrinho',
+      repairCost: 35.00,
+      category: 'Manopla / Alças',
+      slaTime: '1h (Oficina Interna)',
+    ),
+    DefectTypeModel(
+      id: 'def_cart_lock',
+      name: 'Trava eletrônica antifurto com falha',
+      equipmentType: 'Carrinho',
+      repairCost: 110.00,
+      category: 'Sistema Antifurto',
+      slaTime: '6h (Técnico IoT)',
+    ),
+    DefectTypeModel(
+      id: 'def_cart_axle',
+      name: 'Eixo traseiro desalinhado por sobrecarga',
+      equipmentType: 'Carrinho',
+      repairCost: 65.00,
+      category: 'Rodízios / Rodas',
+      slaTime: '3h (Oficina Interna)',
+    ),
+    // Cestos
+    DefectTypeModel(
+      id: 'def_basket_handle',
+      name: 'Alça plástica lateral trincada',
+      equipmentType: 'Cesto',
+      repairCost: 18.00,
+      category: 'Manopla / Alças',
+      slaTime: '45min (Substituição)',
+    ),
+    DefectTypeModel(
+      id: 'def_basket_body',
+      name: 'Fundo ou grade plástica rachada',
+      equipmentType: 'Cesto',
+      repairCost: 25.00,
+      category: 'Estrutura / Solda',
+      slaTime: '1h (Triagem)',
+    ),
+    DefectTypeModel(
+      id: 'def_basket_wheel',
+      name: 'Rodinhas do cesto travadas por detritos',
+      equipmentType: 'Cesto',
+      repairCost: 22.00,
+      category: 'Rodízios / Rodas',
+      slaTime: '45min (Limpeza/Troca)',
+    ),
+  ];
+
+  // Estado salvo por equipamento (ex: 'CR001', 'CS001') para persistir avarias e status
+  static final Map<String, Map<String, dynamic>> equipmentRecords = {};
+
+  // Histórico de ocorrências de manutenção da semana (usado no Dashboard e no Relatório PDF)
+  static final List<Map<String, dynamic>> maintenanceLogs = [
+    {
+      'code': 'CR001',
+      'station': 'Estação 1 - Entrada',
+      'defectName': 'Roda dianteira travada ou quebrada',
+      'category': 'Rodízios / Rodas',
+      'cost': 45.00,
+      'status': 'Em conserto',
+    },
+    {
+      'code': 'CR007',
+      'station': 'Estação 3 - Hortifruti',
+      'defectName': 'Roda dianteira travada ou quebrada',
+      'category': 'Rodízios / Rodas',
+      'cost': 45.00,
+      'status': 'Em conserto',
+    },
+    {
+      'code': 'CR009',
+      'station': 'Estação 1 - Entrada',
+      'defectName': 'Grade lateral ou estrutura amassada (Solda)',
+      'category': 'Estrutura / Solda',
+      'cost': 85.00,
+      'status': 'Em conserto',
+    },
+    {
+      'code': 'CR015',
+      'station': 'Estação 4 - Padaria',
+      'defectName': 'Eixo traseiro desalinhado por sobrecarga',
+      'category': 'Rodízios / Rodas',
+      'cost': 65.00,
+      'status': 'Em conserto',
+    },
+    {
+      'code': 'CR016',
+      'station': 'Estação 2 - Saída',
+      'defectName': 'Manopla / Barra de direção solta',
+      'category': 'Manopla / Alças',
+      'cost': 35.00,
+      'status': 'Ativo',
+    },
+    {
+      'code': 'CS002',
+      'station': 'Estação 3 - Hortifruti',
+      'defectName': 'Alça plástica lateral trincada',
+      'category': 'Manopla / Alças',
+      'cost': 18.00,
+      'status': 'Em conserto',
+    },
+    {
+      'code': 'CR024',
+      'station': 'Estação 2 - Saída',
+      'defectName': 'Trava eletrônica antifurto com falha',
+      'category': 'Sistema Antifurto',
+      'cost': 110.00,
+      'status': 'Em conserto',
+    },
+  ];
+
+  static List<DefectTypeModel> getDefectsForType(String equipmentType) {
+    return defectCatalog.where((d) => d.equipmentType == equipmentType).toList();
+  }
+
+  static Map<String, dynamic> getEquipmentRecord(String code, String equipmentType, String stationName) {
+    if (!equipmentRecords.containsKey(code)) {
+      final defaultDefect = getDefectsForType(equipmentType).first;
+      equipmentRecords[code] = {
+        'code': code,
+        'equipmentType': equipmentType,
+        'station': stationName,
+        'status': 'Ativo',
+        'defectId': defaultDefect.id,
+        'defectName': defaultDefect.name,
+        'category': defaultDefect.category,
+        'repairCost': defaultDefect.repairCost,
+        'slaTime': defaultDefect.slaTime,
+        'notes': '',
+        'hasPhoto': false,
+      };
+    }
+    return equipmentRecords[code]!;
+  }
+
+  static void reportEquipmentDefect({
+    required String code,
+    required String equipmentType,
+    required String stationName,
+    required DefectTypeModel defect,
+    required String notes,
+    required bool hasPhoto,
+  }) {
+    final record = getEquipmentRecord(code, equipmentType, stationName);
+    record['defectId'] = defect.id;
+    record['defectName'] = defect.name;
+    record['category'] = defect.category;
+    record['repairCost'] = defect.repairCost;
+    record['slaTime'] = defect.slaTime;
+    record['notes'] = notes;
+    record['hasPhoto'] = hasPhoto;
+    record['status'] = 'Em conserto';
+
+    final existingIdx = maintenanceLogs.indexWhere((m) => m['code'] == code);
+    final logEntry = {
+      'code': code,
+      'station': stationName,
+      'defectName': defect.name,
+      'category': defect.category,
+      'cost': defect.repairCost,
+      'status': 'Aguardando Aprovação / Conserto',
+    };
+    if (existingIdx != -1) {
+      maintenanceLogs[existingIdx] = logEntry;
+    } else {
+      maintenanceLogs.insert(0, logEntry);
+    }
+    stateNotifier.value++;
+  }
+
+  static void updateEquipmentStatus({
+    required String code,
+    required String equipmentType,
+    required String stationName,
+    required String newStatus,
+    required DefectTypeModel defect,
+  }) {
+    final record = getEquipmentRecord(code, equipmentType, stationName);
+    record['status'] = newStatus;
+    record['defectId'] = defect.id;
+    record['defectName'] = defect.name;
+    record['category'] = defect.category;
+    record['repairCost'] = defect.repairCost;
+    record['slaTime'] = defect.slaTime;
+
+    final existingIdx = maintenanceLogs.indexWhere((m) => m['code'] == code);
+    if (existingIdx != -1) {
+      maintenanceLogs[existingIdx]['status'] = newStatus;
+      maintenanceLogs[existingIdx]['defectName'] = defect.name;
+      maintenanceLogs[existingIdx]['category'] = defect.category;
+      maintenanceLogs[existingIdx]['cost'] = defect.repairCost;
+    } else if (newStatus != 'Ativo') {
+      maintenanceLogs.insert(0, {
+        'code': code,
+        'station': stationName,
+        'defectName': defect.name,
+        'category': defect.category,
+        'cost': defect.repairCost,
+        'status': newStatus,
+      });
+    }
+    stateNotifier.value++;
+  }
+
+  static double get totalMaintenanceCost {
+    return maintenanceLogs.fold(0.0, (sum, item) => sum + (item['cost'] as double));
+  }
+
+  static String get formattedTotalMaintenanceCost {
+    return 'R\$ ${totalMaintenanceCost.toStringAsFixed(2).replaceAll('.', ',')}';
+  }
+
+  static Map<String, Map<String, dynamic>> get maintenanceBreakdownByCategory {
+    final Map<String, Map<String, dynamic>> result = {
+      'Rodízios / Rodas': {'count': 0, 'cost': 0.0},
+      'Estrutura / Solda': {'count': 0, 'cost': 0.0},
+      'Manopla / Alças': {'count': 0, 'cost': 0.0},
+      'Sistema Antifurto': {'count': 0, 'cost': 0.0},
+    };
+    for (final item in maintenanceLogs) {
+      final cat = item['category'] as String;
+      final cost = item['cost'] as double;
+      if (!result.containsKey(cat)) {
+        result[cat] = {'count': 0, 'cost': 0.0};
+      }
+      result[cat]!['count'] = (result[cat]!['count'] as int) + 1;
+      result[cat]!['cost'] = (result[cat]!['cost'] as double) + cost;
+    }
+    return result;
+  }
 
   static final List<TaskItemModel> tasks = [
     TaskItemModel(

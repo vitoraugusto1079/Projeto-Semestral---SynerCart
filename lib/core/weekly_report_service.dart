@@ -283,7 +283,54 @@ class WeeklyReportService {
           ),
           pw.SizedBox(height: 18),
 
-          // 5. Resumo da Equipe e Chamados
+          // 5. Tipologia das Avarias e Custo de Manutenção
+          pw.Text(
+            '4. TIPOLOGIA DE AVARIAS E CUSTOS DE MANUTENCAO (${MockDB.formattedTotalMaintenanceCost})',
+            style: pw.TextStyle(fontSize: 11, fontWeight: pw.FontWeight.bold, color: textDark),
+          ),
+          pw.SizedBox(height: 8),
+          pw.TableHelper.fromTextArray(
+            headers: [
+              'Equipamento',
+              'Estacao',
+              'Avaria Registrada',
+              'Categoria',
+              'Status',
+              'Custo Reparo',
+            ],
+            data: MockDB.maintenanceLogs.map((log) {
+              final cost = log['cost'] as double;
+              return [
+                log['code'].toString(),
+                log['station'].toString(),
+                log['defectName'].toString(),
+                log['category'].toString(),
+                log['status'].toString(),
+                'R\$ ${cost.toStringAsFixed(2).replaceAll('.', ',')}',
+              ];
+            }).toList(),
+            headerStyle: pw.TextStyle(
+              color: PdfColors.white,
+              fontSize: 8,
+              fontWeight: pw.FontWeight.bold,
+            ),
+            headerDecoration: const pw.BoxDecoration(color: primaryBlue),
+            cellStyle: const pw.TextStyle(fontSize: 7.5, color: textDark),
+            cellPadding: const pw.EdgeInsets.symmetric(horizontal: 6, vertical: 5),
+            oddRowDecoration: const pw.BoxDecoration(color: cardBg),
+            border: pw.TableBorder.all(color: borderGrey, width: 0.6),
+            cellAlignments: {
+              0: pw.Alignment.center,
+              1: pw.Alignment.centerLeft,
+              2: pw.Alignment.centerLeft,
+              3: pw.Alignment.centerLeft,
+              4: pw.Alignment.center,
+              5: pw.Alignment.centerRight,
+            },
+          ),
+          pw.SizedBox(height: 16),
+
+          // 6. Resumo da Equipe e Chamados
           pw.Container(
             padding: const pw.EdgeInsets.all(12),
             decoration: pw.BoxDecoration(
