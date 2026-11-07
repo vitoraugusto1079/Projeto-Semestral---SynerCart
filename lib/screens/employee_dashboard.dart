@@ -166,7 +166,7 @@ class _StationCapacityCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        final isBasketOnly = name.contains('Cestos') || name.contains('Hortifruti');
+        final isBasketOnly = name.contains('Hortifruti') || name.contains('Padaria');
         Navigator.push(
           context,
           MaterialPageRoute(

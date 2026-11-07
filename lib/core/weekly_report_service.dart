@@ -260,7 +260,7 @@ class WeeklyReportService {
                   : rawStatus == 'alert'
                       ? 'ALERTA (Monitorar)'
                       : 'ESTAVEL (Operacao Normal)';
-              final equipType = (name.contains('Cestos') || name.contains('Hortifruti'))
+              final equipType = (name.contains('Hortifruti') || name.contains('Padaria'))
                   ? 'Cestos de Compras'
                   : 'Carrinhos e Cestos';
               return [

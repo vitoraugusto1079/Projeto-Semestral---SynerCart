@@ -110,11 +110,10 @@ class MockDB {
   };
 
   static final List<Map<String, dynamic>> stations = [
-    {"name": "Entrada Principal", "status": "critical", "percentage": 23},
-    {"name": "Saída", "status": "stable", "percentage": 78},
-    {"name": "Depósito Cestos", "status": "alert", "percentage": 45},
-    {"name": "Estacionamento", "status": "stable", "percentage": 91},
-    {"name": "Hortifruti", "status": "alert", "percentage": 60},
+    {"name": "Estação 1 - Entrada", "status": "critical", "percentage": 23},
+    {"name": "Estação 2 - Saída", "status": "stable", "percentage": 78},
+    {"name": "Estação 3 - Hortifruti", "status": "alert", "percentage": 45},
+    {"name": "Estação 4 - Padaria", "status": "stable", "percentage": 91},
   ];
 
   static final List<TaskItemModel> tasks = [
@@ -197,8 +196,8 @@ class MockDB {
         stations[0]['status'] = 'stable';
         stations[0]['percentage'] = 85;
       } else if (taskId == 'task_2') {
-        stations[4]['status'] = 'stable';
-        stations[4]['percentage'] = 90;
+        stations[2]['status'] = 'stable';
+        stations[2]['percentage'] = 90;
       }
 
       stateNotifier.value++;
