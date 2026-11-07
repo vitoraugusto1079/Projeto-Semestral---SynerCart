@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/theme.dart';
+import '../core/mock_db.dart';
 
 class ManagerMapScreen extends StatefulWidget {
   const ManagerMapScreen({super.key});
@@ -538,7 +539,7 @@ class _ManagerMapScreenState extends State<ManagerMapScreen> {
             ),
             const SizedBox(height: 12),
 
-            // Linha 2 de Status: Funcionários ativos
+            // Linha 2 de Status: Funcionários ativos + Ação Rápida
             Row(
               children: [
                 Expanded(
@@ -551,13 +552,345 @@ class _ManagerMapScreenState extends State<ManagerMapScreen> {
                   ),
                 ),
                 const SizedBox(width: 12),
-                const Expanded(child: SizedBox()),
+                Expanded(
+                  child: _MapInfoCard(
+                    icon: Icons.assignment_turned_in_outlined,
+                    iconColor: AppTheme.success,
+                    iconBgColor: AppTheme.success.withValues(alpha: 0.18),
+                    title: 'Ordens Ativas:\n${MockDB.tasks.where((t) => !t.isResolved).length} pendentes',
+                    subtitle: 'Sincronizado com o\npainel da equipe',
+                  ),
+                ),
               ],
+            ),
+            const SizedBox(height: 16),
+
+            // Card de Comando da Gerência: Criar Ordem de Reposição
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: const Color(0xFF1E293B),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppTheme.primary.withValues(alpha: 0.3)),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: AppTheme.primary.withValues(alpha: 0.18),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Icon(Icons.campaign_outlined, color: AppTheme.primary, size: 22),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Despacho Operacional • ${currentStation.name}',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(height: 3),
+                            const Text(
+                              'Acione a equipe para recolher equipamentos fora da baia nesta estação',
+                              style: TextStyle(
+                                color: Color(0xFF94A3B8),
+                                fontSize: 11,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.primary,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      onPressed: () => _showCreateOrderDialog(currentStation),
+                      icon: const Icon(Icons.add_task_rounded, size: 18, color: Colors.white),
+                      label: const Text(
+                        'Criar Ordem de Reposição',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 24),
           ],
         ),
       ),
+    );
+  }
+
+  void _showCreateOrderDialog(_StationMapData station) {
+    final isBasketSector = station.key == 'hortifruti' || station.key == 'padaria';
+    String selectedEquip = isBasketSector ? 'Cestos' : 'Carrinhos';
+    int selectedQty = isBasketSector ? 12 : 10;
+    bool isUrgent = true;
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return AlertDialog(
+              backgroundColor: const Color(0xFF1E293B),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              title: Row(
+                children: [
+                  const Icon(Icons.add_task_rounded, color: AppTheme.primary, size: 22),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'Nova Ordem • ${station.name}',
+                      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Tipo de Equipamento:',
+                    style: TextStyle(color: AppTheme.textSecondary, fontSize: 12),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => setModalState(() => selectedEquip = 'Carrinhos'),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            decoration: BoxDecoration(
+                              color: selectedEquip == 'Carrinhos'
+                                  ? AppTheme.primary.withValues(alpha: 0.2)
+                                  : const Color(0xFF0F172A),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: selectedEquip == 'Carrinhos' ? AppTheme.primary : Colors.transparent,
+                              ),
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Carrinhos',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: selectedEquip == 'Carrinhos' ? AppTheme.primary : AppTheme.textSecondary,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => setModalState(() => selectedEquip = 'Cestos'),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            decoration: BoxDecoration(
+                              color: selectedEquip == 'Cestos'
+                                  ? AppTheme.primary.withValues(alpha: 0.2)
+                                  : const Color(0xFF0F172A),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: selectedEquip == 'Cestos' ? AppTheme.primary : Colors.transparent,
+                              ),
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Cestos',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: selectedEquip == 'Cestos' ? AppTheme.primary : AppTheme.textSecondary,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Quantidade para Recolhimento:',
+                    style: TextStyle(color: AppTheme.textSecondary, fontSize: 12),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [5, 10, 15, 20].map((qty) {
+                      final isSel = selectedQty == qty;
+                      return GestureDetector(
+                        onTap: () => setModalState(() => selectedQty = qty),
+                        child: Container(
+                          width: 54,
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          decoration: BoxDecoration(
+                            color: isSel ? AppTheme.primary.withValues(alpha: 0.2) : const Color(0xFF0F172A),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: isSel ? AppTheme.primary : Colors.transparent),
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            '$qty un.',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: isSel ? AppTheme.primary : AppTheme.textSecondary,
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 16),
+                  const Text(
+                    'Nível de Prioridade:',
+                    style: TextStyle(color: AppTheme.textSecondary, fontSize: 12),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => setModalState(() => isUrgent = true),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            decoration: BoxDecoration(
+                              color: isUrgent ? AppTheme.error.withValues(alpha: 0.2) : const Color(0xFF0F172A),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: isUrgent ? AppTheme.error : Colors.transparent),
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Crítica (Imediata)',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: isUrgent ? AppTheme.error : AppTheme.textSecondary,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => setModalState(() => isUrgent = false),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            decoration: BoxDecoration(
+                              color: !isUrgent ? AppTheme.warning.withValues(alpha: 0.2) : const Color(0xFF0F172A),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: !isUrgent ? AppTheme.warning : Colors.transparent),
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Normal',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: !isUrgent ? AppTheme.warning : AppTheme.textSecondary,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              actionsPadding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
+              actions: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primary),
+                      onPressed: () {
+                        Navigator.pop(dialogContext);
+                        setState(() {
+                          MockDB.createReplenishmentOrder(
+                            stationName: station.name,
+                            fromLocation: 'Corredores • ${station.sectorSubtitle}',
+                            quantity: selectedQty,
+                            equipmentType: selectedEquip,
+                            isUrgent: isUrgent,
+                          );
+                        });
+                        showDialog(
+                          context: this.context,
+                          builder: (ctx) => AlertDialog(
+                            backgroundColor: const Color(0xFF1E293B),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                            contentPadding: const EdgeInsets.all(24),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.check_circle, color: AppTheme.success, size: 60),
+                                const SizedBox(height: 16),
+                                const Text(
+                                  'Ordem Enviada à Equipe!',
+                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'A solicitação de recolhimento de $selectedQty ${selectedEquip.toLowerCase()} para "${station.name}" já está disponível na aba de Tarefas dos funcionários.',
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(color: Color(0xFF94A3B8), fontSize: 13),
+                                ),
+                                const SizedBox(height: 24),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(backgroundColor: AppTheme.success),
+                                    onPressed: () => Navigator.pop(ctx),
+                                    child: const Text('Continuar'),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                      child: const Text('Despachar para Equipe'),
+                    ),
+                    const SizedBox(height: 8),
+                    TextButton(
+                      onPressed: () => Navigator.pop(dialogContext),
+                      child: const Text('Cancelar', style: TextStyle(color: AppTheme.textSecondary)),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
   }
 }

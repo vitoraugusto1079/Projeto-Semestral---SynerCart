@@ -479,4 +479,34 @@ class MockDB {
       stateNotifier.value++;
     }
   }
+
+  static void createReplenishmentOrder({
+    required String stationName,
+    required String fromLocation,
+    required int quantity,
+    required String equipmentType,
+    required bool isUrgent,
+  }) {
+    final newId = 'task_${tasks.length + 1}';
+    tasks.insert(
+      0,
+      TaskItemModel(
+        id: newId,
+        title: stationName,
+        subtitle: '$equipmentType fora da baia: $quantity unidades solicitadas',
+        resolvedSubtitle: '$equipmentType repostos — $quantity unidades',
+        timeText: 'Agora mesmo',
+        status: isUrgent ? 'critical' : 'warning',
+        fromLocation: fromLocation,
+        toLocation: stationName,
+        quantityText: 'Quantidade Necessária: $quantity $equipmentType',
+        priorityText: isUrgent ? 'Prioridade Máxima (Gerência)' : 'Prioridade Alta (Gerência)',
+        corridorLabel: 'Ordem Direta da Gerência',
+        estimatedTime: '~4 min est.',
+        profileBannerTitle: '• ORDEM DA GERÊNCIA: ${stationName.toUpperCase()}',
+        profileDescription: 'Recolher e repor $quantity ${equipmentType.toLowerCase()} de $fromLocation para $stationName.',
+      ),
+    );
+    stateNotifier.value++;
+  }
 }
