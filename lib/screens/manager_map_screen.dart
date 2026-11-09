@@ -20,8 +20,8 @@ class _ManagerMapScreenState extends State<ManagerMapScreen> {
       imageAsset: 'lib/assets/icons/mapa_entrada.png',
       outOfStationTitle: '3 Carrinhos fora\ndas estações',
       damagedTitle: '1 Carrinho com\navaria',
-      activeEmployeesTitle: 'Funcionários\nativos: 40',
-      activeEmployeesSubtitle: '4 funcionários alocados\nnessa estação',
+      activeEmployeesTitle: 'Funcionários\nativos: 5',
+      activeEmployeesSubtitle: '1 funcionário alocado\nnessa estação',
       markers: [
         _MarkerData(
           xFactor: 0.48,
@@ -77,8 +77,8 @@ class _ManagerMapScreenState extends State<ManagerMapScreen> {
       imageAsset: 'lib/assets/icons/mapa_saida.png',
       outOfStationTitle: '4 Carrinhos fora\ndas estações',
       damagedTitle: '1 Carrinho com\navaria',
-      activeEmployeesTitle: 'Funcionários\nativos: 40',
-      activeEmployeesSubtitle: '5 funcionários alocados\nnessa estação',
+      activeEmployeesTitle: 'Funcionários\nativos: 5',
+      activeEmployeesSubtitle: '2 funcionários alocados\nnessa estação',
       markers: [
         _MarkerData(
           xFactor: 0.36,
@@ -145,8 +145,8 @@ class _ManagerMapScreenState extends State<ManagerMapScreen> {
       imageAsset: 'lib/assets/icons/mapa_planta.png',
       outOfStationTitle: '6 Carrinhos fora\ndas estações',
       damagedTitle: '1 Carrinho com\navaria',
-      activeEmployeesTitle: 'Funcionários\nativos: 40',
-      activeEmployeesSubtitle: '6 funcionários com\ncargo para função',
+      activeEmployeesTitle: 'Funcionários\nativos: 5',
+      activeEmployeesSubtitle: '1 funcionário com\ncargo para função',
       markers: [
         _MarkerData(
           xFactor: 0.12,
@@ -213,8 +213,8 @@ class _ManagerMapScreenState extends State<ManagerMapScreen> {
       imageAsset: 'lib/assets/icons/mapa_padaria.png',
       outOfStationTitle: '3 Carrinhos fora\ndas estações',
       damagedTitle: '1 Carrinho com\navaria',
-      activeEmployeesTitle: 'Funcionários\nativos: 40',
-      activeEmployeesSubtitle: '4 funcionários alocados\nnessa estação',
+      activeEmployeesTitle: 'Funcionários\nativos: 5',
+      activeEmployeesSubtitle: '1 funcionário alocado\nnessa estação',
       markers: [
         _MarkerData(
           xFactor: 0.28,

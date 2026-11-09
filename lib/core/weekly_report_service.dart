@@ -350,7 +350,7 @@ class WeeklyReportService {
                     ),
                     pw.SizedBox(height: 4),
                     pw.Text(
-                      '• Funcionarios ativos no turno: 40 colaboradores conectados via SynerCart',
+                      '• Funcionarios ativos no turno: 5 colaboradores na operacao de frota via SynerCart',
                       style: const pw.TextStyle(fontSize: 8, color: textDark),
                     ),
                     pw.Text(

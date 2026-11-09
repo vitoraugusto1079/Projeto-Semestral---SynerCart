@@ -167,7 +167,7 @@ class _ManagerProfileScreenState extends State<ManagerProfileScreen> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            '40 Ativos',
+                            '5 Ativos',
                             style: TextStyle(
                               color: Color(0xFF3B82F6),
                               fontSize: 11,
@@ -442,7 +442,7 @@ class _ManagerProfileScreenState extends State<ManagerProfileScreen> {
                           ),
                           SizedBox(height: 2),
                           Text(
-                            '40 colaboradores ativos • 19 na operação de frota',
+                            '5 colaboradores ativos na operação de frota',
                             style: TextStyle(color: AppTheme.textSecondary, fontSize: 12),
                           ),
                         ],
@@ -467,10 +467,10 @@ class _ManagerProfileScreenState extends State<ManagerProfileScreen> {
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        _StationAllocationSummary(label: 'Estação 1', count: '4 un.'),
-                        _StationAllocationSummary(label: 'Estação 2', count: '5 un.'),
-                        _StationAllocationSummary(label: 'Estação 3', count: '6 un.'),
-                        _StationAllocationSummary(label: 'Estação 4', count: '4 un.'),
+                        _StationAllocationSummary(label: 'Estação 1', count: '1 op.'),
+                        _StationAllocationSummary(label: 'Estação 2', count: '2 op.'),
+                        _StationAllocationSummary(label: 'Estação 3', count: '1 op.'),
+                        _StationAllocationSummary(label: 'Estação 4', count: '1 op.'),
                       ],
                     ),
                   ),
