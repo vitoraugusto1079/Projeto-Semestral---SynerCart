@@ -244,11 +244,13 @@ class _ManagerProfileScreenState extends State<ManagerProfileScreen> {
                         color: Colors.white,
                         shape: BoxShape.circle,
                       ),
-                      child: const Center(
+                      child: Center(
                         child: Icon(
-                          Icons.check_circle_outline,
-                          color: Color(0xFF161B22),
-                          size: 26,
+                          _reportDownloaded
+                              ? Icons.check_circle_outline
+                              : Icons.download_rounded,
+                          color: const Color(0xFF161B22),
+                          size: 24,
                         ),
                       ),
                     ),
