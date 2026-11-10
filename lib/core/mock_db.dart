@@ -130,11 +130,84 @@ class MockDB {
   };
 
   static final List<Map<String, dynamic>> stations = [
-    {"name": "Estação 1 - Entrada", "status": "critical", "percentage": 23},
-    {"name": "Estação 2 - Saída", "status": "stable", "percentage": 78},
-    {"name": "Estação 3 - Hortifruti", "status": "alert", "percentage": 45},
-    {"name": "Estação 4 - Padaria", "status": "stable", "percentage": 91},
+    {
+      "name": "Estação 1 - Entrada",
+      "sector": "Acesso ao Supermercado",
+      "zone": "Entrada / Acesso",
+      "status": "critical",
+      "percentage": 23,
+      "hasCestos": true,
+      "hasCarrinhos": true,
+      "cestosTotal": 20,
+      "cestosActive": 18,
+      "cestosMaintenance": 1,
+      "carrinhosTotal": 28,
+      "carrinhosActive": 25,
+      "carrinhosMaintenance": 2,
+      "minAlertPercentage": 25,
+      "toleranceMinutes": 15,
+      "assignedEmployee": "Carlos Eduardo (Recolhedor)",
+    },
+    {
+      "name": "Estação 2 - Saída",
+      "sector": "Caixas e Pagamento",
+      "zone": "Saída / Caixas",
+      "status": "stable",
+      "percentage": 78,
+      "hasCestos": true,
+      "hasCarrinhos": true,
+      "cestosTotal": 20,
+      "cestosActive": 19,
+      "cestosMaintenance": 1,
+      "carrinhosTotal": 28,
+      "carrinhosActive": 26,
+      "carrinhosMaintenance": 1,
+      "minAlertPercentage": 25,
+      "toleranceMinutes": 15,
+      "assignedEmployee": "Marcos Vinícius (Repositor)",
+    },
+    {
+      "name": "Estação 3 - Hortifruti",
+      "sector": "Frutas e Verduras",
+      "zone": "Hortifrúti",
+      "status": "alert",
+      "percentage": 45,
+      "hasCestos": true,
+      "hasCarrinhos": false,
+      "cestosTotal": 20,
+      "cestosActive": 18,
+      "cestosMaintenance": 1,
+      "carrinhosTotal": 0,
+      "carrinhosActive": 0,
+      "carrinhosMaintenance": 0,
+      "minAlertPercentage": 30,
+      "toleranceMinutes": 15,
+      "assignedEmployee": "João Silva (Repositor)",
+    },
+    {
+      "name": "Estação 4 - Padaria",
+      "sector": "Pães e Confeitaria",
+      "zone": "Padaria",
+      "status": "stable",
+      "percentage": 91,
+      "hasCestos": true,
+      "hasCarrinhos": false,
+      "cestosTotal": 20,
+      "cestosActive": 19,
+      "cestosMaintenance": 1,
+      "carrinhosTotal": 0,
+      "carrinhosActive": 0,
+      "carrinhosMaintenance": 0,
+      "minAlertPercentage": 30,
+      "toleranceMinutes": 15,
+      "assignedEmployee": "Fernanda Lima (Repositora)",
+    },
   ];
+
+  static void addStation(Map<String, dynamic> newStation) {
+    stations.add(newStation);
+    stateNotifier.value++;
+  }
 
   // Catálogo pré-cadastrado de Tipologia de Avarias e Custos de Reparo
   static const List<DefectTypeModel> defectCatalog = [

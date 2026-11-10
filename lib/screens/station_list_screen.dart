@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/theme.dart';
+import '../core/mock_db.dart';
 import 'equipment_list_screen.dart';
 import 'equipment_detail_screen.dart';
 import 'station_registration_screen.dart';
@@ -26,13 +27,15 @@ class _StationListScreenState extends State<StationListScreen> {
     });
   }
 
-  void _openEquipmentList(String stationTitle, String type, bool hasCarrinhos) {
+  void _openEquipmentList(Map<String, dynamic> station, String type) {
+    final title = station['name'] as String;
+    final hasCarrinhos = (station['hasCarrinhos'] as bool?) ?? false;
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => EquipmentListScreen(
           role: widget.role,
-          stationName: stationTitle,
+          stationName: title,
           initialEquipmentType: type,
           hasCarrinhos: hasCarrinhos,
         ),
@@ -48,74 +51,82 @@ class _StationListScreenState extends State<StationListScreen> {
         title: const Text('Estações', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            // Top Card - Unidade 7
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppTheme.surface,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: AppTheme.primary.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(Icons.shopping_cart_checkout, color: AppTheme.primary, size: 24),
+      body: ValueListenableBuilder<int>(
+        valueListenable: MockDB.stateNotifier,
+        builder: (context, _, _) {
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                // Top Card - Unidade 7
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: AppTheme.surface,
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  const SizedBox(width: 16),
-                  const Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Unidade 7', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                        Text(
-                          'Estações (Área de retirada do carrinho/cesto)',
-                          style: TextStyle(color: AppTheme.textSecondary, fontSize: 10),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: AppTheme.primary.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                      ],
-                    ),
+                        child: const Icon(Icons.shopping_cart_checkout, color: AppTheme.primary, size: 24),
+                      ),
+                      const SizedBox(width: 16),
+                      const Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Unidade 7', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                            Text(
+                              'Estações (Área de retirada do carrinho/cesto)',
+                              style: TextStyle(color: AppTheme.textSecondary, fontSize: 10),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // Station Cards dinâmicos do MockDB
+                ...MockDB.stations.map((station) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: _buildStationCard(station),
+                  );
+                }),
+
+                if (widget.role != 'employee') ...[
+                  const SizedBox(height: 12),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const StationRegistrationScreen()),
+                      );
+                    },
+                    child: const Text('Adicionar Estação +'),
                   ),
                 ],
-              ),
+                const SizedBox(height: 24),
+              ],
             ),
-            const SizedBox(height: 24),
-            
-            // Station Cards
-            _buildStationCard('Estação 1 - Entrada', true),
-            const SizedBox(height: 12),
-            _buildStationCard('Estação 2 - Saída', true),
-            const SizedBox(height: 12),
-            _buildStationCard('Estação 3 - Hortifruti', false),
-            const SizedBox(height: 12),
-            _buildStationCard('Estação 4 - Padaria', false),
-
-            if (widget.role != 'employee') ...[
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const StationRegistrationScreen()),
-                  );
-                },
-                child: const Text('Adicionar Estação +'),
-              ),
-            ],
-            const SizedBox(height: 24),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildStationCard(String title, bool hasCarrinhos) {
+  Widget _buildStationCard(Map<String, dynamic> station) {
+    final title = station['name'] as String;
+    final sector = (station['sector'] as String?) ?? 'Equipamentos do local';
+    final hasCestos = (station['hasCestos'] as bool?) ?? true;
+    final hasCarrinhos = (station['hasCarrinhos'] as bool?) ?? false;
     final expandedType = _expandedPillByStation[title];
 
     return Container(
@@ -130,23 +141,24 @@ class _StationListScreenState extends State<StationListScreen> {
           GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: () => _openEquipmentList(
-              title,
+              station,
               hasCarrinhos ? 'Carrinhos' : 'Cestos',
-              hasCarrinhos,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                    const SizedBox(height: 4),
-                    const Text(
-                      'Equipamentos do local',
-                      style: TextStyle(color: AppTheme.textSecondary, fontSize: 10),
-                    ),
-                  ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                      const SizedBox(height: 4),
+                      Text(
+                        sector,
+                        style: const TextStyle(color: AppTheme.textSecondary, fontSize: 10),
+                      ),
+                    ],
+                  ),
                 ),
                 const Icon(Icons.chevron_right, color: AppTheme.textSecondary, size: 18),
               ],
@@ -155,19 +167,19 @@ class _StationListScreenState extends State<StationListScreen> {
           const SizedBox(height: 12),
           Row(
             children: [
-              _buildEquipmentDropdownPill(
-                stationTitle: title,
-                type: 'Cestos',
-                isExpanded: expandedType == 'Cestos',
-              ),
-              if (hasCarrinhos) ...[
-                const SizedBox(width: 12),
+              if (hasCestos)
+                _buildEquipmentDropdownPill(
+                  stationTitle: title,
+                  type: 'Cestos',
+                  isExpanded: expandedType == 'Cestos',
+                ),
+              if (hasCestos && hasCarrinhos) const SizedBox(width: 12),
+              if (hasCarrinhos)
                 _buildEquipmentDropdownPill(
                   stationTitle: title,
                   type: 'Carrinhos',
                   isExpanded: expandedType == 'Carrinhos',
                 ),
-              ],
             ],
           ),
           AnimatedSize(
@@ -176,9 +188,8 @@ class _StationListScreenState extends State<StationListScreen> {
             alignment: Alignment.topCenter,
             child: expandedType != null
                 ? _buildExpandedEquipmentPreview(
-                    stationTitle: title,
+                    station: station,
                     type: expandedType,
-                    hasCarrinhos: hasCarrinhos,
                   )
                 : const SizedBox.shrink(),
           ),
@@ -237,15 +248,22 @@ class _StationListScreenState extends State<StationListScreen> {
   }
 
   Widget _buildExpandedEquipmentPreview({
-    required String stationTitle,
+    required Map<String, dynamic> station,
     required String type,
-    required bool hasCarrinhos,
   }) {
+    final stationTitle = station['name'] as String;
     final isCestos = type == 'Cestos';
     final singularLabel = isCestos ? 'Cesto' : 'Carrinho';
-    final totalCount = isCestos ? 20 : 28;
-    final activeCount = isCestos ? 18 : 25;
-    final maintenanceCount = isCestos ? 1 : 2;
+    final totalCount = isCestos
+        ? ((station['cestosTotal'] as int?) ?? 20)
+        : ((station['carrinhosTotal'] as int?) ?? 28);
+    final activeCount = isCestos
+        ? ((station['cestosActive'] as int?) ?? 18)
+        : ((station['carrinhosActive'] as int?) ?? 25);
+    final maintenanceCount = isCestos
+        ? ((station['cestosMaintenance'] as int?) ?? 1)
+        : ((station['carrinhosMaintenance'] as int?) ?? 2);
+    final previewCount = totalCount >= 4 ? 4 : totalCount;
 
     return Padding(
       padding: const EdgeInsets.only(top: 12),
@@ -294,7 +312,7 @@ class _StationListScreenState extends State<StationListScreen> {
             Wrap(
               spacing: 8,
               runSpacing: 8,
-              children: List.generate(4, (index) {
+              children: List.generate(previewCount, (index) {
                 final itemNumber = index + 1;
                 return GestureDetector(
                   onTap: () {
@@ -345,7 +363,7 @@ class _StationListScreenState extends State<StationListScreen> {
                   backgroundColor: AppTheme.primary.withValues(alpha: 0.12),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 ),
-                onPressed: () => _openEquipmentList(stationTitle, type, hasCarrinhos),
+                onPressed: () => _openEquipmentList(station, type),
                 child: Text(
                   'Ver todos os $totalCount ${type.toLowerCase()} desta estação',
                   style: const TextStyle(

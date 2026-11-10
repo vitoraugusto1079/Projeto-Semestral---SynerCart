@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/theme.dart';
+import '../core/mock_db.dart';
 import 'equipment_detail_screen.dart';
 import 'equipment_registration_screen.dart';
 
@@ -24,16 +25,37 @@ class EquipmentListScreen extends StatefulWidget {
 class _EquipmentListScreenState extends State<EquipmentListScreen> {
   late String _selectedType;
 
+  Map<String, dynamic>? get _stationData {
+    for (final s in MockDB.stations) {
+      if (s['name'] == widget.stationName) return s;
+    }
+    return null;
+  }
+
   @override
   void initState() {
     super.initState();
-    _selectedType = widget.hasCarrinhos ? widget.initialEquipmentType : 'Cestos';
+    final hasCestos = (_stationData?['hasCestos'] as bool?) ?? true;
+    final hasCarrinhos = (_stationData?['hasCarrinhos'] as bool?) ?? widget.hasCarrinhos;
+    if (widget.initialEquipmentType == 'Carrinhos' && hasCarrinhos) {
+      _selectedType = 'Carrinhos';
+    } else if (hasCestos) {
+      _selectedType = 'Cestos';
+    } else {
+      _selectedType = 'Carrinhos';
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final station = _stationData;
+    final hasCestos = (station?['hasCestos'] as bool?) ?? true;
+    final hasCarrinhos = (station?['hasCarrinhos'] as bool?) ?? widget.hasCarrinhos;
+    final cestosTotal = (station?['cestosTotal'] as int?) ?? 20;
+    final carrinhosTotal = (station?['carrinhosTotal'] as int?) ?? 28;
+
     final isCestos = _selectedType == 'Cestos';
-    final itemCount = isCestos ? 20 : 28;
+    final itemCount = isCestos ? cestosTotal : carrinhosTotal;
     final singularLabel = isCestos ? 'Cesto' : 'Carrinho';
 
     return Scaffold(
@@ -82,19 +104,19 @@ class _EquipmentListScreenState extends State<EquipmentListScreen> {
             // Pílulas de alternância entre Cestos e Carrinhos
             Row(
               children: [
-                _buildTypeFilterPill(
-                  label: 'Cestos (20)',
-                  type: 'Cestos',
-                  icon: Icons.shopping_basket_outlined,
-                ),
-                if (widget.hasCarrinhos) ...[
-                  const SizedBox(width: 10),
+                if (hasCestos)
                   _buildTypeFilterPill(
-                    label: 'Carrinhos (28)',
+                    label: 'Cestos ($cestosTotal)',
+                    type: 'Cestos',
+                    icon: Icons.shopping_basket_outlined,
+                  ),
+                if (hasCestos && hasCarrinhos) const SizedBox(width: 10),
+                if (hasCarrinhos)
+                  _buildTypeFilterPill(
+                    label: 'Carrinhos ($carrinhosTotal)',
                     type: 'Carrinhos',
                     icon: Icons.shopping_cart_outlined,
                   ),
-                ],
               ],
             ),
             const SizedBox(height: 20),
