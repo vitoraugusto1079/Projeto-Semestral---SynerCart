@@ -23,7 +23,7 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
       chartPoints: [0.18, 0.42, 0.56, 0.80, 0.25],
       hourlyCarts: [10, 23, 31, 44, 14],
       totalMovimentado: '168',
-      totalSubtitle: 'Ciclos completos de carrinhos na segunda',
+      totalSubtitle: 'Ciclos completos de equipamentos na segunda',
       totalPillText: '+6%',
       totalPillColor: AppTheme.success,
       tempoMedio: '4m 10s',
@@ -44,7 +44,7 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
       chartPoints: [0.20, 0.45, 0.55, 0.84, 0.27],
       hourlyCarts: [11, 25, 30, 46, 15],
       totalMovimentado: '176',
-      totalSubtitle: 'Ciclos completos de carrinhos na terça',
+      totalSubtitle: 'Ciclos completos de equipamentos na terça',
       totalPillText: '+8%',
       totalPillColor: AppTheme.success,
       tempoMedio: '4m 20s',
@@ -65,7 +65,7 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
       chartPoints: [0.22, 0.49, 0.62, 0.93, 0.31],
       hourlyCarts: [12, 27, 34, 51, 17],
       totalMovimentado: '194',
-      totalSubtitle: 'Ciclos completos de carrinhos hoje',
+      totalSubtitle: 'Ciclos completos de equipamentos hoje',
       totalPillText: '+12%',
       totalPillColor: AppTheme.success,
       tempoMedio: '4m 30s',
@@ -86,7 +86,7 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
       chartPoints: [0.24, 0.51, 0.60, 0.89, 0.33],
       hourlyCarts: [13, 28, 33, 49, 18],
       totalMovimentado: '205',
-      totalSubtitle: 'Ciclos completos de carrinhos na quinta',
+      totalSubtitle: 'Ciclos completos de equipamentos na quinta',
       totalPillText: '+15%',
       totalPillColor: AppTheme.success,
       tempoMedio: '4m 45s',
@@ -107,7 +107,7 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
       chartPoints: [0.27, 0.58, 0.71, 0.96, 0.44],
       hourlyCarts: [15, 32, 39, 54, 24],
       totalMovimentado: '238',
-      totalSubtitle: 'Ciclos completos de carrinhos na sexta',
+      totalSubtitle: 'Ciclos completos de equipamentos na sexta',
       totalPillText: '+22%',
       totalPillColor: AppTheme.success,
       tempoMedio: '5m 10s',
@@ -128,7 +128,7 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
       chartPoints: [0.33, 0.82, 0.98, 0.76, 0.36],
       hourlyCarts: [18, 45, 55, 42, 20],
       totalMovimentado: '264',
-      totalSubtitle: 'Ciclos completos de carrinhos no sábado',
+      totalSubtitle: 'Ciclos completos de equipamentos no sábado',
       totalPillText: '+28%',
       totalPillColor: AppTheme.success,
       tempoMedio: '5m 35s',
@@ -149,7 +149,7 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
       chartPoints: [0.22, 0.84, 0.67, 0.38, 0.16],
       hourlyCarts: [12, 46, 37, 21, 9],
       totalMovimentado: '152',
-      totalSubtitle: 'Ciclos completos de carrinhos no domingo',
+      totalSubtitle: 'Ciclos completos de equipamentos no domingo',
       totalPillText: '-6%',
       totalPillColor: AppTheme.textSecondary,
       tempoMedio: '3m 50s',
@@ -279,13 +279,13 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('Uso de Carrinhos por Horário', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                      const Text('Uso de Equipamentos por Horário', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
                       // Pílula Pico dinâmica
                       _StatusPill(text: currentDay.peakLabel, color: AppTheme.primary),
                     ],
                   ),
                   const SizedBox(height: 4),
-                  const Text('Carrinhos em uso simultâneo na loja (frota de 56 carrinhos)', style: TextStyle(color: AppTheme.textSecondary, fontSize: 11)),
+                  const Text('Equipamentos em uso simultâneo na loja', style: TextStyle(color: AppTheme.textSecondary, fontSize: 11)),
                   const SizedBox(height: 16),
                   _HourlyUsageChart(
                     normalizedPoints: currentDay.chartPoints,
@@ -310,7 +310,7 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
             // Card Tempo Médio
             _MetricCard(
               title: 'Tempo Médio de Reposição',
-              subtitle: 'Tempo para retornar carrinhos às estações',
+              subtitle: 'Tempo para retornar equipamentos às estações',
               value: currentDay.tempoMedio,
               pillText: currentDay.tempoPillText,
               pillColor: currentDay.tempoPillColor,
@@ -605,26 +605,13 @@ class _HourlyUsageChart extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: List.generate(hours.length, (i) {
             final isPeak = i == peakIndex;
-            return Column(
-              children: [
-                Text(
-                  hours[i],
-                  style: TextStyle(
-                    color: isPeak ? AppTheme.primary : AppTheme.textSecondary,
-                    fontSize: 11,
-                    fontWeight: isPeak ? FontWeight.bold : FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  '${hourlyCarts[i]} car.',
-                  style: TextStyle(
-                    color: isPeak ? Colors.white : AppTheme.textSecondary.withValues(alpha: 0.75),
-                    fontSize: 10,
-                    fontWeight: isPeak ? FontWeight.bold : FontWeight.normal,
-                  ),
-                ),
-              ],
+            return Text(
+              hours[i],
+              style: TextStyle(
+                color: isPeak ? AppTheme.primary : AppTheme.textSecondary,
+                fontSize: 11,
+                fontWeight: isPeak ? FontWeight.bold : FontWeight.w500,
+              ),
             );
           }),
         ),

@@ -32,13 +32,13 @@ class WeeklyReportService {
     const redError = PdfColor.fromInt(0xFFDC2626);
 
     final weeklyRows = [
-      ['Segunda-feira (18/08)', '168 ciclos', '128 un.', '6 un.', '18h00 (44 car.)', '4m 10s', 'Normal'],
-      ['Terca-feira (19/08)', '176 ciclos', '129 un.', '5 un.', '18h00 (46 car.)', '4m 20s', 'Normal'],
-      ['Quarta-feira (23/08)', '194 ciclos', '126 un.', '7 un.', '18h00 (51 car.)', '4m 30s', 'Atencao'],
-      ['Quinta-feira (24/08)', '205 ciclos', '127 un.', '6 un.', '18h00 (49 car.)', '4m 45s', 'Atencao'],
-      ['Sexta-feira (25/08)', '238 ciclos', '130 un.', '4 un.', '18h00 (54 car.)', '5m 10s', 'Alerta'],
-      ['Sabado (26/08)', '264 ciclos', '131 un.', '4 un.', '14h00 (55 car.)', '5m 35s', 'Critico'],
-      ['Domingo (27/08)', '152 ciclos', '128 un.', '5 un.', '10h00 (46 car.)', '3m 50s', 'Otimo'],
+      ['Segunda-feira (18/08)', '168 ciclos', '128 un.', '6 un.', '18h00 (44 un.)', '4m 10s', 'Normal'],
+      ['Terca-feira (19/08)', '176 ciclos', '129 un.', '5 un.', '18h00 (46 un.)', '4m 20s', 'Normal'],
+      ['Quarta-feira (23/08)', '194 ciclos', '126 un.', '7 un.', '18h00 (51 un.)', '4m 30s', 'Atencao'],
+      ['Quinta-feira (24/08)', '205 ciclos', '127 un.', '6 un.', '18h00 (49 un.)', '4m 45s', 'Atencao'],
+      ['Sexta-feira (25/08)', '238 ciclos', '130 un.', '4 un.', '18h00 (54 un.)', '5m 10s', 'Alerta'],
+      ['Sabado (26/08)', '264 ciclos', '131 un.', '4 un.', '14h00 (55 un.)', '5m 35s', 'Critico'],
+      ['Domingo (27/08)', '152 ciclos', '128 un.', '5 un.', '10h00 (46 un.)', '3m 50s', 'Otimo'],
     ];
 
     doc.addPage(
