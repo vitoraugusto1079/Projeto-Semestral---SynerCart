@@ -25,11 +25,20 @@ class AppTheme {
         error: error,
       ),
       appBarTheme: const AppBarTheme(
-        backgroundColor: surface, // Fundo permanente mais claro
-        elevation: 2, // Elevação fixa
-        shadowColor: Colors.black54, // Sombra sutil permanente
-        surfaceTintColor: primary, // O leve tom azulado constante
-        scrolledUnderElevation: 0, // Desativa a mudança no scroll
+        backgroundColor: surface, // Barra de topo destacada (mesmo tom da navbar)
+        elevation: 0,
+        shadowColor: Colors.black54,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        titleTextStyle: TextStyle(
+          fontFamily: 'Inter',
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: textPrimary,
+        ),
+        shape: Border(
+          bottom: BorderSide(color: Color(0xFF21262D), width: 1),
+        ),
       ),
       fontFamily: 'Inter', // Fonte limpa (padrão)
       

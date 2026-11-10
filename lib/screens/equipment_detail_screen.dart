@@ -181,8 +181,6 @@ class _EquipmentDetailScreenState extends State<EquipmentDetailScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
         title: Text('Equipamento - ${widget.equipmentType} ${widget.cartNumber}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         centerTitle: true,
         leading: IconButton(

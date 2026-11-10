@@ -13,9 +13,7 @@ class EmployeeProfileScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: const Text('Meu Turno', style: TextStyle(fontSize: 16)),
+        title: const Text('Meu Turno', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
       body: ValueListenableBuilder<int>(
@@ -62,7 +60,7 @@ class EmployeeProfileScreen extends StatelessWidget {
                               ),
                               SizedBox(height: 2),
                               Text(
-                                'Repositor - ID: 8849',
+                                'Repositor / Recolhedor - ID: 8849',
                                 style: TextStyle(color: AppTheme.textSecondary, fontSize: 12),
                               ),
                             ],

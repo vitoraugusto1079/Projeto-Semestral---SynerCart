@@ -38,8 +38,6 @@ class _EquipmentListScreenState extends State<EquipmentListScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
         title: Text(
           'Equipamentos • $_selectedType',
           style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),

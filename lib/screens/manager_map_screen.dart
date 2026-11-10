@@ -20,8 +20,8 @@ class _ManagerMapScreenState extends State<ManagerMapScreen> {
       imageAsset: 'lib/assets/icons/mapa_entrada.png',
       outOfStationTitle: '3 Carrinhos fora\ndas estações',
       damagedTitle: '1 Carrinho com\navaria',
-      activeEmployeesTitle: 'Funcionários\nativos: 5',
-      activeEmployeesSubtitle: '1 funcionário alocado\nnessa estação',
+      activeEmployeesTitle: 'Repositores\nno turno: 5',
+      activeEmployeesSubtitle: '1 repositor alocado\nnessa estação',
       markers: [
         _MarkerData(
           xFactor: 0.48,
@@ -77,8 +77,8 @@ class _ManagerMapScreenState extends State<ManagerMapScreen> {
       imageAsset: 'lib/assets/icons/mapa_saida.png',
       outOfStationTitle: '4 Carrinhos fora\ndas estações',
       damagedTitle: '1 Carrinho com\navaria',
-      activeEmployeesTitle: 'Funcionários\nativos: 5',
-      activeEmployeesSubtitle: '2 funcionários alocados\nnessa estação',
+      activeEmployeesTitle: 'Repositores\nno turno: 5',
+      activeEmployeesSubtitle: '2 recolhedores alocados\nnessa estação',
       markers: [
         _MarkerData(
           xFactor: 0.36,
@@ -143,10 +143,10 @@ class _ManagerMapScreenState extends State<ManagerMapScreen> {
       name: 'Estação 3 - Hortifrúti',
       sectorSubtitle: 'Frutas e Verduras',
       imageAsset: 'lib/assets/icons/mapa_planta.png',
-      outOfStationTitle: '6 Carrinhos fora\ndas estações',
-      damagedTitle: '1 Carrinho com\navaria',
-      activeEmployeesTitle: 'Funcionários\nativos: 5',
-      activeEmployeesSubtitle: '1 funcionário com\ncargo para função',
+      outOfStationTitle: '4 Cestos fora\ndas estações',
+      damagedTitle: '1 Cesto com\navaria',
+      activeEmployeesTitle: 'Repositores\nno turno: 5',
+      activeEmployeesSubtitle: '1 repositor de cestos\nnessa estação',
       markers: [
         _MarkerData(
           xFactor: 0.12,
@@ -213,8 +213,8 @@ class _ManagerMapScreenState extends State<ManagerMapScreen> {
       imageAsset: 'lib/assets/icons/mapa_padaria.png',
       outOfStationTitle: '3 Carrinhos fora\ndas estações',
       damagedTitle: '1 Carrinho com\navaria',
-      activeEmployeesTitle: 'Funcionários\nativos: 5',
-      activeEmployeesSubtitle: '1 funcionário alocado\nnessa estação',
+      activeEmployeesTitle: 'Repositores\nno turno: 5',
+      activeEmployeesSubtitle: '1 repositor alocado\nnessa estação',
       markers: [
         _MarkerData(
           xFactor: 0.28,
@@ -273,13 +273,11 @@ class _ManagerMapScreenState extends State<ManagerMapScreen> {
       backgroundColor: const Color(0xFF090D1A),
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
         titleSpacing: 20,
         title: const Text(
           'Mapa de Carrinhos',
           style: TextStyle(
-            fontSize: 18,
+            fontSize: 16,
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),

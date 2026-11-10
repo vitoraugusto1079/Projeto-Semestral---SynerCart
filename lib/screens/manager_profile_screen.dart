@@ -21,8 +21,6 @@ class _ManagerProfileScreenState extends State<ManagerProfileScreen> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
         title: const Text('Meu Turno', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
@@ -146,12 +144,12 @@ class _ManagerProfileScreenState extends State<ManagerProfileScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Funcionários em atividade',
+                            'Repositores e recolhedores no turno',
                             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.white),
                           ),
                           SizedBox(height: 2),
                           Text(
-                            'Toque para ver a equipe e alocação do turno',
+                            'Toque para ver a equipe de recolha e reposição',
                             style: TextStyle(color: AppTheme.textSecondary, fontSize: 11),
                           ),
                         ],
@@ -351,7 +349,7 @@ class _ManagerProfileScreenState extends State<ManagerProfileScreen> {
       {
         'name': 'João Silva',
         'id': 'ID: 8849',
-        'role': 'Repositor Líder',
+        'role': 'Repositor / Recolhedor de Carrinhos',
         'station': 'Estação 1 - Entrada',
         'completed': MockDB.completedTasksCount,
         'activeTime': '4h 30m',
@@ -361,7 +359,7 @@ class _ManagerProfileScreenState extends State<ManagerProfileScreen> {
       {
         'name': 'Marcos Silva',
         'id': 'ID: 7412',
-        'role': 'Repositor',
+        'role': 'Recolhedor de Carrinhos (Frente de Caixa)',
         'station': 'Estação 2 - Saída',
         'completed': 5,
         'activeTime': '4h 15m',
@@ -371,7 +369,7 @@ class _ManagerProfileScreenState extends State<ManagerProfileScreen> {
       {
         'name': 'Róger Mendes Azevedo',
         'id': 'ID: 9104',
-        'role': 'Repositor',
+        'role': 'Repositor de Cestos e Carrinhos',
         'station': 'Estação 3 - Hortifruti',
         'completed': 4,
         'activeTime': '3h 50m',
@@ -381,7 +379,7 @@ class _ManagerProfileScreenState extends State<ManagerProfileScreen> {
       {
         'name': 'Camila Rocha',
         'id': 'ID: 6320',
-        'role': 'Operadora de Apoio',
+        'role': 'Repositora de Cestos',
         'station': 'Estação 4 - Padaria',
         'completed': 6,
         'activeTime': '4h 25m',
@@ -391,8 +389,8 @@ class _ManagerProfileScreenState extends State<ManagerProfileScreen> {
       {
         'name': 'Lucas Oliveira',
         'id': 'ID: 5518',
-        'role': 'Técnico de Manutenção',
-        'station': 'Oficina Interna',
+        'role': 'Recolhedor / Manutenção de Frota',
+        'station': 'Estação 2 - Saída / Oficina',
         'completed': 3,
         'activeTime': '4h 00m',
         'status': 'Em Reparo',
@@ -437,12 +435,12 @@ class _ManagerProfileScreenState extends State<ManagerProfileScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Equipe do Turno (Manhã)',
+                            'Equipe de Recolha e Reposição',
                             style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Colors.white),
                           ),
                           SizedBox(height: 2),
                           Text(
-                            '5 colaboradores ativos na operação de frota',
+                            '5 repositores/recolhedores ativos no turno da manhã',
                             style: TextStyle(color: AppTheme.textSecondary, fontSize: 12),
                           ),
                         ],

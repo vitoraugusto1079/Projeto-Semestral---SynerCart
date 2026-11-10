@@ -32,13 +32,13 @@ class WeeklyReportService {
     const redError = PdfColor.fromInt(0xFFDC2626);
 
     final weeklyRows = [
-      ['Segunda-feira (18/08)', '312 ciclos', '252 un.', '28 un.', '17h30 (85%)', '4m 10s', 'Normal'],
-      ['Terca-feira (19/08)', '328 ciclos', '255 un.', '25 un.', '18h15 (88%)', '4m 20s', 'Normal'],
-      ['Quarta-feira (23/08)', '347 ciclos', '250 un.', '30 un.', '18h00 (94%)', '4m 30s', 'Atencao'],
-      ['Quinta-feira (24/08)', '365 ciclos', '248 un.', '32 un.', '18h30 (91%)', '4m 45s', 'Atencao'],
-      ['Sexta-feira (25/08)', '420 ciclos', '260 un.', '22 un.', '19h00 (98%)', '5m 10s', 'Alerta'],
-      ['Sabado (26/08)', '495 ciclos', '268 un.', '18 un.', '14h00 (96%)', '5m 35s', 'Critico'],
-      ['Domingo (27/08)', '275 ciclos', '245 un.', '35 un.', '11h30 (82%)', '3m 50s', 'Otimo'],
+      ['Segunda-feira (18/08)', '168 ciclos', '128 un.', '6 un.', '18h00 (44 car.)', '4m 10s', 'Normal'],
+      ['Terca-feira (19/08)', '176 ciclos', '129 un.', '5 un.', '18h00 (46 car.)', '4m 20s', 'Normal'],
+      ['Quarta-feira (23/08)', '194 ciclos', '126 un.', '7 un.', '18h00 (51 car.)', '4m 30s', 'Atencao'],
+      ['Quinta-feira (24/08)', '205 ciclos', '127 un.', '6 un.', '18h00 (49 car.)', '4m 45s', 'Atencao'],
+      ['Sexta-feira (25/08)', '238 ciclos', '130 un.', '4 un.', '18h00 (54 car.)', '5m 10s', 'Alerta'],
+      ['Sabado (26/08)', '264 ciclos', '131 un.', '4 un.', '14h00 (55 car.)', '5m 35s', 'Critico'],
+      ['Domingo (27/08)', '152 ciclos', '128 un.', '5 un.', '10h00 (46 car.)', '3m 50s', 'Otimo'],
     ];
 
     doc.addPage(
@@ -155,8 +155,8 @@ class WeeklyReportService {
               pw.Expanded(
                 child: _buildKpiCard(
                   title: 'Total da Frota',
-                  value: '300 un.',
-                  subtitle: 'Carrinhos e Cestos',
+                  value: '136 un.',
+                  subtitle: '56 Carrinhos e 80 Cestos',
                   accentColor: primaryBlue,
                   bgColor: cardBg,
                   borderColor: borderGrey,
@@ -166,8 +166,8 @@ class WeeklyReportService {
               pw.Expanded(
                 child: _buildKpiCard(
                   title: 'Em Operacao (Ativos)',
-                  value: '250 un.',
-                  subtitle: '83.3% da frota disponivel',
+                  value: '126 un.',
+                  subtitle: '92.6% da frota disponivel',
                   accentColor: greenSuccess,
                   bgColor: cardBg,
                   borderColor: borderGrey,
@@ -177,8 +177,8 @@ class WeeklyReportService {
               pw.Expanded(
                 child: _buildKpiCard(
                   title: 'Em Manutencao',
-                  value: '30 un.',
-                  subtitle: '10.0% em oficina interna',
+                  value: '6 un.',
+                  subtitle: '4.4% em oficina interna',
                   accentColor: amberWarning,
                   bgColor: cardBg,
                   borderColor: borderGrey,
@@ -187,9 +187,9 @@ class WeeklyReportService {
               pw.SizedBox(width: 8),
               pw.Expanded(
                 child: _buildKpiCard(
-                  title: 'Inativos / Avariados',
-                  value: '20 un.',
-                  subtitle: '6.7% aguardando triagem',
+                  title: 'Inativos / Reserva',
+                  value: '4 un.',
+                  subtitle: '3.0% aguardando triagem',
                   accentColor: redError,
                   bgColor: cardBg,
                   borderColor: borderGrey,
@@ -350,7 +350,7 @@ class WeeklyReportService {
                     ),
                     pw.SizedBox(height: 4),
                     pw.Text(
-                      '• Funcionarios ativos no turno: 5 colaboradores na operacao de frota via SynerCart',
+                      '• Equipe ativa no turno: 5 repositores/recolhedores de carrinhos e cestos via SynerCart',
                       style: const pw.TextStyle(fontSize: 8, color: textDark),
                     ),
                     pw.Text(
@@ -358,7 +358,7 @@ class WeeklyReportService {
                       style: const pw.TextStyle(fontSize: 8, color: textDark),
                     ),
                     pw.Text(
-                      '• Volume total acumulado na semana: 2.542 ciclos completos de carrinhos e cestos',
+                      '• Volume total acumulado na semana: 1.397 ciclos completos de carrinhos e cestos',
                       style: const pw.TextStyle(fontSize: 8, color: textDark),
                     ),
                   ],

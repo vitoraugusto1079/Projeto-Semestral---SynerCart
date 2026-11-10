@@ -260,13 +260,11 @@ class _EmployeeMapScreenState extends State<EmployeeMapScreen> {
       backgroundColor: const Color(0xFF090D1A),
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
         titleSpacing: 20,
         title: const Text(
           'Mapa de Carrinhos',
           style: TextStyle(
-            fontSize: 18,
+            fontSize: 16,
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),

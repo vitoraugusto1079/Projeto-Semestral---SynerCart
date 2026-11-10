@@ -18,17 +18,18 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
       menuLabel: 'Segunda-feira',
       buttonLabel: 'Segunda',
       dateDescription: 'Segunda, 18 de agosto de 2026',
-      peakLabel: 'Pico às 17h30',
+      peakLabel: 'Pico às 18h (44 un.)',
       peakIndex: 3,
-      chartPoints: [0.15, 0.42, 0.60, 0.85, 0.20],
-      totalMovimentado: '312',
+      chartPoints: [0.18, 0.42, 0.56, 0.80, 0.25],
+      hourlyCarts: [10, 23, 31, 44, 14],
+      totalMovimentado: '168',
       totalSubtitle: 'Ciclos completos de carrinhos na segunda',
-      totalPillText: '+8%',
+      totalPillText: '+6%',
       totalPillColor: AppTheme.success,
       tempoMedio: '4m 10s',
       tempoPillText: 'Normal',
       tempoPillColor: AppTheme.success,
-      tarefasCriticas: '8',
+      tarefasCriticas: '4',
       tarefasPillText: 'Moderado',
       tarefasPillColor: AppTheme.warning,
       isToday: false,
@@ -38,17 +39,18 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
       menuLabel: 'Terça-feira',
       buttonLabel: 'Terça',
       dateDescription: 'Terça, 19 de agosto de 2026',
-      peakLabel: 'Pico às 18h15',
+      peakLabel: 'Pico às 18h (46 un.)',
       peakIndex: 3,
-      chartPoints: [0.18, 0.45, 0.52, 0.88, 0.22],
-      totalMovimentado: '328',
+      chartPoints: [0.20, 0.45, 0.55, 0.84, 0.27],
+      hourlyCarts: [11, 25, 30, 46, 15],
+      totalMovimentado: '176',
       totalSubtitle: 'Ciclos completos de carrinhos na terça',
-      totalPillText: '+10%',
+      totalPillText: '+8%',
       totalPillColor: AppTheme.success,
       tempoMedio: '4m 20s',
       tempoPillText: 'Normal',
       tempoPillColor: AppTheme.success,
-      tarefasCriticas: '9',
+      tarefasCriticas: '5',
       tarefasPillText: 'Moderado',
       tarefasPillColor: AppTheme.warning,
       isToday: false,
@@ -58,17 +60,18 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
       menuLabel: 'Quarta-feira (Hoje)',
       buttonLabel: 'Hoje',
       dateDescription: 'Quarta, 23 de agosto de 2026',
-      peakLabel: 'Pico às 18h00',
+      peakLabel: 'Pico às 18h (51 un.)',
       peakIndex: 3,
-      chartPoints: [0.20, 0.48, 0.55, 0.94, 0.28],
-      totalMovimentado: '347',
+      chartPoints: [0.22, 0.49, 0.62, 0.93, 0.31],
+      hourlyCarts: [12, 27, 34, 51, 17],
+      totalMovimentado: '194',
       totalSubtitle: 'Ciclos completos de carrinhos hoje',
       totalPillText: '+12%',
       totalPillColor: AppTheme.success,
       tempoMedio: '4m 30s',
       tempoPillText: 'Atenção',
       tempoPillColor: AppTheme.warning,
-      tarefasCriticas: '12',
+      tarefasCriticas: '6',
       tarefasPillText: 'Crítico',
       tarefasPillColor: AppTheme.error,
       isToday: true,
@@ -78,17 +81,18 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
       menuLabel: 'Quinta-feira',
       buttonLabel: 'Quinta',
       dateDescription: 'Quinta, 24 de agosto de 2026',
-      peakLabel: 'Pico às 18h30',
+      peakLabel: 'Pico às 18h (49 un.)',
       peakIndex: 3,
-      chartPoints: [0.22, 0.50, 0.58, 0.91, 0.32],
-      totalMovimentado: '365',
+      chartPoints: [0.24, 0.51, 0.60, 0.89, 0.33],
+      hourlyCarts: [13, 28, 33, 49, 18],
+      totalMovimentado: '205',
       totalSubtitle: 'Ciclos completos de carrinhos na quinta',
       totalPillText: '+15%',
       totalPillColor: AppTheme.success,
       tempoMedio: '4m 45s',
       tempoPillText: 'Atenção',
       tempoPillColor: AppTheme.warning,
-      tarefasCriticas: '14',
+      tarefasCriticas: '7',
       tarefasPillText: 'Crítico',
       tarefasPillColor: AppTheme.error,
       isToday: false,
@@ -98,17 +102,18 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
       menuLabel: 'Sexta-feira',
       buttonLabel: 'Sexta',
       dateDescription: 'Sexta, 25 de agosto de 2026',
-      peakLabel: 'Pico às 19h00',
+      peakLabel: 'Pico às 18h (54 un.)',
       peakIndex: 3,
-      chartPoints: [0.25, 0.55, 0.70, 0.98, 0.45],
-      totalMovimentado: '420',
+      chartPoints: [0.27, 0.58, 0.71, 0.96, 0.44],
+      hourlyCarts: [15, 32, 39, 54, 24],
+      totalMovimentado: '238',
       totalSubtitle: 'Ciclos completos de carrinhos na sexta',
-      totalPillText: '+24%',
+      totalPillText: '+22%',
       totalPillColor: AppTheme.success,
       tempoMedio: '5m 10s',
       tempoPillText: 'Alerta',
       tempoPillColor: AppTheme.warning,
-      tarefasCriticas: '19',
+      tarefasCriticas: '9',
       tarefasPillText: 'Crítico',
       tarefasPillColor: AppTheme.error,
       isToday: false,
@@ -118,17 +123,18 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
       menuLabel: 'Sábado',
       buttonLabel: 'Sábado',
       dateDescription: 'Sábado, 26 de agosto de 2026',
-      peakLabel: 'Pico às 14h00',
+      peakLabel: 'Pico às 14h (55 un.)',
       peakIndex: 2,
-      chartPoints: [0.30, 0.82, 0.96, 0.72, 0.35],
-      totalMovimentado: '495',
+      chartPoints: [0.33, 0.82, 0.98, 0.76, 0.36],
+      hourlyCarts: [18, 45, 55, 42, 20],
+      totalMovimentado: '264',
       totalSubtitle: 'Ciclos completos de carrinhos no sábado',
-      totalPillText: '+35%',
+      totalPillText: '+28%',
       totalPillColor: AppTheme.success,
       tempoMedio: '5m 35s',
       tempoPillText: 'Alerta',
       tempoPillColor: AppTheme.warning,
-      tarefasCriticas: '23',
+      tarefasCriticas: '11',
       tarefasPillText: 'Crítico',
       tarefasPillColor: AppTheme.error,
       isToday: false,
@@ -138,17 +144,18 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
       menuLabel: 'Domingo',
       buttonLabel: 'Domingo',
       dateDescription: 'Domingo, 27 de agosto de 2026',
-      peakLabel: 'Pico às 11h30',
+      peakLabel: 'Pico às 10h (46 un.)',
       peakIndex: 1,
-      chartPoints: [0.18, 0.82, 0.65, 0.38, 0.15],
-      totalMovimentado: '275',
+      chartPoints: [0.22, 0.84, 0.67, 0.38, 0.16],
+      hourlyCarts: [12, 46, 37, 21, 9],
+      totalMovimentado: '152',
       totalSubtitle: 'Ciclos completos de carrinhos no domingo',
       totalPillText: '-6%',
       totalPillColor: AppTheme.textSecondary,
       tempoMedio: '3m 50s',
       tempoPillText: 'Ótimo',
       tempoPillColor: AppTheme.success,
-      tarefasCriticas: '5',
+      tarefasCriticas: '3',
       tarefasPillText: 'Baixo',
       tarefasPillColor: AppTheme.success,
       isToday: false,
@@ -162,22 +169,20 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
         title: Row(
           children: [
-            const Icon(Icons.shopping_cart, color: AppTheme.primary, size: 32),
+            const Icon(Icons.shopping_cart, color: AppTheme.primary, size: 26),
             const SizedBox(width: 12),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
                   'Unidade 7',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
                 ),
                 Text(
                   currentDay.dateDescription,
-                  style: TextStyle(fontSize: 12, color: AppTheme.textSecondary.withValues(alpha: 0.8)),
+                  style: TextStyle(fontSize: 11, color: AppTheme.textSecondary.withValues(alpha: 0.8)),
                 ),
               ],
             ),
@@ -280,10 +285,11 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
                     ],
                   ),
                   const SizedBox(height: 4),
-                  const Text('Monitoramento de fluxo ativo na loja', style: TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
+                  const Text('Carrinhos em uso simultâneo na loja (frota de 56 carrinhos)', style: TextStyle(color: AppTheme.textSecondary, fontSize: 11)),
                   const SizedBox(height: 16),
                   _HourlyUsageChart(
                     normalizedPoints: currentDay.chartPoints,
+                    hourlyCarts: currentDay.hourlyCarts,
                     peakIndex: currentDay.peakIndex,
                   ),
                 ],
@@ -442,6 +448,7 @@ class _DayDashboardData {
   final String peakLabel;
   final int peakIndex;
   final List<double> chartPoints;
+  final List<int> hourlyCarts;
   final String totalMovimentado;
   final String totalSubtitle;
   final String totalPillText;
@@ -462,6 +469,7 @@ class _DayDashboardData {
     required this.peakLabel,
     required this.peakIndex,
     required this.chartPoints,
+    required this.hourlyCarts,
     required this.totalMovimentado,
     required this.totalSubtitle,
     required this.totalPillText,
@@ -566,37 +574,59 @@ class _StatusPill extends StatelessWidget {
 
 class _HourlyUsageChart extends StatelessWidget {
   final List<double> normalizedPoints;
+  final List<int> hourlyCarts;
   final int peakIndex;
 
   const _HourlyUsageChart({
     required this.normalizedPoints,
+    required this.hourlyCarts,
     required this.peakIndex,
   });
 
   @override
   Widget build(BuildContext context) {
+    const hours = ['6h', '10h', '14h', '18h', '22h'];
+
     return Column(
       children: [
         SizedBox(
-          height: 130,
+          height: 145,
           width: double.infinity,
           child: CustomPaint(
             painter: _ChartPainter(
               normalizedPoints: normalizedPoints,
+              hourlyCarts: hourlyCarts,
               peakIndex: peakIndex,
             ),
           ),
         ),
-        const SizedBox(height: 8),
-        const Row(
+        const SizedBox(height: 10),
+        Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('6h', style: TextStyle(color: AppTheme.textSecondary, fontSize: 11, fontWeight: FontWeight.w500)),
-            Text('10h', style: TextStyle(color: AppTheme.textSecondary, fontSize: 11, fontWeight: FontWeight.w500)),
-            Text('14h', style: TextStyle(color: AppTheme.textSecondary, fontSize: 11, fontWeight: FontWeight.w500)),
-            Text('18h', style: TextStyle(color: AppTheme.textSecondary, fontSize: 11, fontWeight: FontWeight.w500)),
-            Text('22h', style: TextStyle(color: AppTheme.textSecondary, fontSize: 11, fontWeight: FontWeight.w500)),
-          ],
+          children: List.generate(hours.length, (i) {
+            final isPeak = i == peakIndex;
+            return Column(
+              children: [
+                Text(
+                  hours[i],
+                  style: TextStyle(
+                    color: isPeak ? AppTheme.primary : AppTheme.textSecondary,
+                    fontSize: 11,
+                    fontWeight: isPeak ? FontWeight.bold : FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  '${hourlyCarts[i]} car.',
+                  style: TextStyle(
+                    color: isPeak ? Colors.white : AppTheme.textSecondary.withValues(alpha: 0.75),
+                    fontSize: 10,
+                    fontWeight: isPeak ? FontWeight.bold : FontWeight.normal,
+                  ),
+                ),
+              ],
+            );
+          }),
         ),
       ],
     );
@@ -605,18 +635,20 @@ class _HourlyUsageChart extends StatelessWidget {
 
 class _ChartPainter extends CustomPainter {
   final List<double> normalizedPoints;
+  final List<int> hourlyCarts;
   final int peakIndex;
 
   _ChartPainter({
     required this.normalizedPoints,
+    required this.hourlyCarts,
     required this.peakIndex,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
-    const leftPad = 8.0;
-    const rightPad = 8.0;
-    const topPad = 18.0;
+    const leftPad = 18.0;
+    const rightPad = 18.0;
+    const topPad = 26.0;
     const bottomPad = 8.0;
 
     final usableWidth = size.width - leftPad - rightPad;
@@ -751,11 +783,32 @@ class _ChartPainter extends CustomPainter {
           Paint()..color = const Color(0xFF3B82F6),
         );
       }
+
+      // 7. Rótulo com a quantidade de carrinhos usados acima de cada ponto
+      final isPeak = i == safePeakIndex;
+      final labelSpan = TextSpan(
+        text: '${hourlyCarts[i]} un.',
+        style: TextStyle(
+          color: isPeak ? const Color(0xFF60A5FA) : const Color(0xFF94A3B8),
+          fontSize: isPeak ? 10.5 : 9.5,
+          fontWeight: isPeak ? FontWeight.bold : FontWeight.w600,
+        ),
+      );
+      final textPainter = TextPainter(
+        text: labelSpan,
+        textDirection: TextDirection.ltr,
+      )..layout();
+
+      final labelX = (pt.dx - textPainter.width / 2).clamp(0.0, size.width - textPainter.width);
+      final labelY = (pt.dy - (isPeak ? 22.0 : 17.0)).clamp(0.0, size.height - textPainter.height);
+      textPainter.paint(canvas, Offset(labelX, labelY));
     }
   }
 
   @override
   bool shouldRepaint(covariant _ChartPainter oldDelegate) {
-    return oldDelegate.normalizedPoints != normalizedPoints || oldDelegate.peakIndex != peakIndex;
+    return oldDelegate.normalizedPoints != normalizedPoints ||
+        oldDelegate.peakIndex != peakIndex ||
+        oldDelegate.hourlyCarts != hourlyCarts;
   }
 }
