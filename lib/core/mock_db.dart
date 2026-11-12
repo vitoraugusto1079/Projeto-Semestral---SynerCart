@@ -83,6 +83,7 @@ class TaskItemModel {
   final String resolvedSubtitle;
   String timeText;
   String status; // 'critical', 'warning', 'resolved'
+  bool isAccepted;
   final String fromLocation;
   final String toLocation;
   final String quantityText;
@@ -99,6 +100,7 @@ class TaskItemModel {
     required this.resolvedSubtitle,
     required this.timeText,
     required this.status,
+    this.isAccepted = false,
     required this.fromLocation,
     required this.toLocation,
     required this.quantityText,
@@ -128,6 +130,53 @@ class MockDB {
     "completed_tasks": 3,
     "active_time": "4h 30m"
   };
+
+  static final Map<String, dynamic> employeeProfile = {
+    "id": "8849",
+    "name": "João Silva",
+    "email": "Silvajo@gmail.com",
+    "phone": "(11) 98412-3090",
+    "position": "Repositor / Recolhedor",
+    "shift": "Turno Manhã (06h às 14h20)",
+    "unit": "Unidade 07 - Supermercado Central",
+    "password": "******",
+    "customAvatarBytes": null,
+  };
+
+  static final Map<String, dynamic> managerProfile = {
+    "id": "8849",
+    "name": "Aline Carvalho",
+    "email": "Carvalho@gmail.com",
+    "phone": "(11) 99145-7820",
+    "position": "Gerente de Operações",
+    "shift": "Turno Integral / Comercial",
+    "unit": "Unidade 07 - Supermercado Central",
+    "password": "654321",
+    "customAvatarBytes": null,
+  };
+
+  static void updateUserProfile({
+    required String role,
+    required String name,
+    required String email,
+    required String phone,
+    required String shift,
+    required String password,
+    Uint8List? avatarBytes,
+  }) {
+    final target = role == 'manager' ? managerProfile : employeeProfile;
+    if (name.trim().isNotEmpty) target['name'] = name.trim();
+    if (email.trim().isNotEmpty) target['email'] = email.trim();
+    if (phone.trim().isNotEmpty) target['phone'] = phone.trim();
+    if (shift.trim().isNotEmpty) target['shift'] = shift.trim();
+    if (password.trim().isNotEmpty) target['password'] = password.trim();
+    if (avatarBytes != null) target['customAvatarBytes'] = avatarBytes;
+    if (role == 'employee') {
+      currentUser['name'] = target['name'];
+      currentUser['email'] = target['email'];
+    }
+    stateNotifier.value++;
+  }
 
   static final List<Map<String, dynamic>> stations = [
     {
@@ -529,10 +578,20 @@ class MockDB {
     ),
   ];
 
+  static void acceptTask(String taskId) {
+    final index = tasks.indexWhere((t) => t.id == taskId);
+    if (index != -1 && !tasks[index].isResolved) {
+      tasks[index].isAccepted = true;
+      tasks[index].timeText = 'Aceita agora';
+      stateNotifier.value++;
+    }
+  }
+
   static void resolveTask(String taskId) {
     final index = tasks.indexWhere((t) => t.id == taskId);
     if (index != -1 && !tasks[index].isResolved) {
       tasks[index].status = 'resolved';
+      tasks[index].isAccepted = false;
       tasks[index].timeText = 'Resolvido agora';
       completedTasksCount++;
       currentUser['completed_tasks'] = completedTasksCount;

@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../core/theme.dart';
@@ -24,106 +25,128 @@ class _ManagerProfileScreenState extends State<ManagerProfileScreen> {
         title: const Text('Meu Turno', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            // Perfil Card
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const EditProfileScreen(role: 'manager')),
-                );
-              },
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: AppTheme.surface,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Row(
-                  children: [
-                    ClipOval(
-                      child: SvgPicture.asset(
-                        'lib/assets/icons/avatar_manager.svg',
-                        width: 48,
-                        height: 48,
-                      ),
+      body: ValueListenableBuilder<int>(
+        valueListenable: MockDB.stateNotifier,
+        builder: (context, _, _) {
+          final profile = MockDB.managerProfile;
+          final customAvatar = profile['customAvatarBytes'] as Uint8List?;
+
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                // Perfil Card
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const EditProfileScreen(role: 'manager')),
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: AppTheme.surface,
+                      borderRadius: BorderRadius.circular(16),
                     ),
-                    const SizedBox(width: 16),
-                    const Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Aline Carvalho',
-                            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white),
+                    child: Row(
+                      children: [
+                        ClipOval(
+                          child: customAvatar != null
+                              ? Image.memory(
+                                  customAvatar,
+                                  width: 48,
+                                  height: 48,
+                                  fit: BoxFit.cover,
+                                )
+                              : SvgPicture.asset(
+                                  'lib/assets/icons/avatar_manager.svg',
+                                  width: 48,
+                                  height: 48,
+                                ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      profile['name'] as String? ?? 'Aline Carvalho',
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  const Icon(Icons.edit_outlined, size: 14, color: AppTheme.textSecondary),
+                                ],
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                'Gerente - ID: ${profile['id'] ?? '8849'}',
+                                style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12),
+                              ),
+                            ],
                           ),
-                          SizedBox(height: 2),
-                          Text(
-                            'Gerente - ID: 8849',
-                            style: TextStyle(color: AppTheme.textSecondary, fontSize: 12),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF172554),
+                            borderRadius: BorderRadius.circular(20),
                           ),
-                        ],
-                      ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.circle, color: Color(0xFF3B82F6), size: 6),
+                              SizedBox(width: 5),
+                              Text(
+                                'ATIVO',
+                                style: TextStyle(
+                                  color: Color(0xFF3B82F6),
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF172554),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: const Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.circle, color: Color(0xFF3B82F6), size: 6),
-                          SizedBox(width: 5),
-                          Text(
-                            'ATIVO',
-                            style: TextStyle(
-                              color: Color(0xFF3B82F6),
-                              fontSize: 10,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            
-            // Dados Card
-            Container(
-              padding: const EdgeInsets.all(16),
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: AppTheme.surface,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: const Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Email:', style: TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
-                  SizedBox(height: 4),
-                  Text(
-                    'Carvalho@gmail.com',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white),
                   ),
-                  SizedBox(height: 12),
-                  Text('Senha:', style: TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
-                  SizedBox(height: 4),
-                  Text(
-                    '654321',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white, letterSpacing: 0.8),
+                ),
+                const SizedBox(height: 16),
+
+                // Dados Card
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: AppTheme.surface,
+                    borderRadius: BorderRadius.circular(16),
                   ),
-                ],
-              ),
-            ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Email:', style: TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
+                      const SizedBox(height: 4),
+                      Text(
+                        profile['email'] as String? ?? 'Carvalho@gmail.com',
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white),
+                      ),
+                      const SizedBox(height: 12),
+                      const Text('Senha:', style: TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
+                      const SizedBox(height: 4),
+                      Text(
+                        profile['password'] as String? ?? '654321',
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white, letterSpacing: 0.8),
+                      ),
+                    ],
+                  ),
+                ),
             const SizedBox(height: 16),
             
             // Funcionários em atividade (Clicável para visualizar a lista da equipe no turno)
@@ -340,6 +363,8 @@ class _ManagerProfileScreenState extends State<ManagerProfileScreen> {
             ),
           ],
         ),
+      );
+        },
       ),
     );
   }

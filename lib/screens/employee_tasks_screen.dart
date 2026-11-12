@@ -17,9 +17,10 @@ class EmployeeTasksScreen extends StatelessWidget {
       body: ValueListenableBuilder<int>(
         valueListenable: MockDB.stateNotifier,
         builder: (context, _, _) {
-          final pendingTasks = MockDB.tasks.where((t) => !t.isResolved).toList();
+          final pendingTasks = MockDB.tasks.where((t) => !t.isResolved && !t.isAccepted).toList();
+          final acceptedTasks = MockDB.tasks.where((t) => !t.isResolved && t.isAccepted).toList();
           final resolvedTasks = MockDB.tasks.where((t) => t.isResolved).toList();
-          final allResolved = pendingTasks.isEmpty;
+          final allResolved = pendingTasks.isEmpty && acceptedTasks.isEmpty;
 
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
@@ -33,7 +34,10 @@ class EmployeeTasksScreen extends StatelessWidget {
                     color: AppTheme.surface,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: (allResolved ? AppTheme.success : const Color(0xFFEF4444)).withValues(alpha: 0.45),
+                      color: (allResolved
+                              ? AppTheme.success
+                              : (pendingTasks.isEmpty ? AppTheme.primary : const Color(0xFFEF4444)))
+                          .withValues(alpha: 0.45),
                       width: 1.2,
                     ),
                   ),
@@ -43,12 +47,16 @@ class EmployeeTasksScreen extends StatelessWidget {
                         width: 44,
                         height: 44,
                         decoration: BoxDecoration(
-                          color: allResolved ? AppTheme.success : const Color(0xFFEF4444),
+                          color: allResolved
+                              ? AppTheme.success
+                              : (pendingTasks.isEmpty ? AppTheme.primary : const Color(0xFFEF4444)),
                           shape: BoxShape.circle,
                         ),
                         child: Center(
                           child: Icon(
-                            allResolved ? Icons.check_circle_outline : Icons.warning_amber_rounded,
+                            allResolved
+                                ? Icons.check_circle_outline
+                                : (pendingTasks.isEmpty ? Icons.assignment_ind_outlined : Icons.warning_amber_rounded),
                             color: Colors.white,
                             size: 24,
                           ),
@@ -60,7 +68,9 @@ class EmployeeTasksScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              allResolved ? 'Tudo em dia!' : 'Atenção!',
+                              allResolved
+                                  ? 'Tudo em dia!'
+                                  : (pendingTasks.isEmpty ? 'Tarefas em andamento' : 'Atenção!'),
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
@@ -71,7 +81,9 @@ class EmployeeTasksScreen extends StatelessWidget {
                             Text(
                               allResolved
                                   ? 'Todos os pontos de coleta foram normalizados'
-                                  : '${pendingTasks.length} ${pendingTasks.length == 1 ? "ponto de coleta abaixo do mínimo" : "pontos de coleta abaixo do mínimo"}',
+                                  : pendingTasks.isEmpty
+                                      ? '${acceptedTasks.length} ${acceptedTasks.length == 1 ? "tarefa aceita aguardando conclusão no seu Perfil" : "tarefas aceitas aguardando conclusão no seu Perfil"}'
+                                      : '${pendingTasks.length} ${pendingTasks.length == 1 ? "ponto de coleta aguardando aceitação" : "pontos de coleta aguardando aceitação"}',
                               style: const TextStyle(
                                 color: AppTheme.textSecondary,
                                 fontSize: 12,
@@ -99,14 +111,20 @@ class EmployeeTasksScreen extends StatelessWidget {
                       color: AppTheme.surface,
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    child: const Row(
+                    child: Row(
                       children: [
-                        Icon(Icons.verified_outlined, color: AppTheme.success, size: 22),
-                        SizedBox(width: 12),
+                        Icon(
+                          acceptedTasks.isNotEmpty ? Icons.person_pin_circle_outlined : Icons.verified_outlined,
+                          color: acceptedTasks.isNotEmpty ? AppTheme.primary : AppTheme.success,
+                          size: 22,
+                        ),
+                        const SizedBox(width: 12),
                         Expanded(
                           child: Text(
-                            'Nenhuma tarefa pendente no momento.',
-                            style: TextStyle(color: AppTheme.textSecondary, fontSize: 13),
+                            acceptedTasks.isNotEmpty
+                                ? 'Todas as tarefas abertas foram aceitas! Acesse a aba Perfil (Meu Turno) para concluí-las.'
+                                : 'Nenhuma tarefa pendente no momento.',
+                            style: const TextStyle(color: AppTheme.textSecondary, fontSize: 13),
                           ),
                         ),
                       ],

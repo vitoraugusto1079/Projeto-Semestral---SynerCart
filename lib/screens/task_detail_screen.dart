@@ -10,11 +10,15 @@ class TaskDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currentTask = task ?? MockDB.tasks.first;
+    final alreadyAccepted = currentTask.isAccepted;
 
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: const Text('Tarefas não resolvidas', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text('Detalhes da Tarefa', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -61,21 +65,21 @@ class TaskDetailScreen extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 24),
-              
+
               Text(currentTask.quantityText, style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
               const SizedBox(height: 4),
               Text(
                 currentTask.priorityText,
                 style: const TextStyle(color: AppTheme.warning, fontSize: 12, fontWeight: FontWeight.bold),
               ),
-              
+
               const SizedBox(height: 32),
               const Text(
                 'ROTA SUGERIDA INTERNA',
                 style: TextStyle(color: AppTheme.textSecondary, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1),
               ),
               const SizedBox(height: 12),
-              
+
               // Simulação do Mapa Interno de Rota
               Container(
                 height: 150,
@@ -137,49 +141,55 @@ class TaskDetailScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 32),
-              
-              ElevatedButton(
-                onPressed: () {
-                  MockDB.resolveTask(currentTask.id);
-                  showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
-                      backgroundColor: AppTheme.surface,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                      contentPadding: const EdgeInsets.all(24),
-                      content: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.check_circle, color: AppTheme.success, size: 60),
-                          const SizedBox(height: 16),
-                          const Text(
-                            'Tarefa Concluída!',
-                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'A reposição em "${currentTask.title}" foi registrada como resolvida e contabilizada no seu turno.',
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(color: AppTheme.textSecondary, fontSize: 14),
-                          ),
-                          const SizedBox(height: 24),
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(backgroundColor: AppTheme.success),
-                              onPressed: () {
-                                Navigator.pop(context); // Fecha o modal
-                                Navigator.pop(context); // Volta para a tela anterior
-                              },
-                              child: const Text('Continuar'),
+
+              ElevatedButton.icon(
+                icon: Icon(
+                  alreadyAccepted ? Icons.assignment_turned_in_outlined : Icons.add_task_rounded,
+                  size: 18,
+                ),
+                label: Text(alreadyAccepted ? 'Tarefa já aceita (Conclua no Perfil)' : 'Aceitar Tarefa'),
+                onPressed: alreadyAccepted
+                    ? null
+                    : () {
+                        MockDB.acceptTask(currentTask.id);
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            backgroundColor: AppTheme.surface,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                            contentPadding: const EdgeInsets.all(24),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.check_circle, color: AppTheme.primary, size: 60),
+                                const SizedBox(height: 16),
+                                const Text(
+                                  'Tarefa Aceita!',
+                                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'A tarefa em "${currentTask.title}" foi adicionada ao seu Perfil (Meu Turno). Acesse seu perfil para concluí-la após realizar a reposição.',
+                                  textAlign: TextAlign.center,
+                                  style: const TextStyle(color: AppTheme.textSecondary, fontSize: 14),
+                                ),
+                                const SizedBox(height: 24),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primary),
+                                    onPressed: () {
+                                      Navigator.pop(context); // Fecha o modal
+                                      Navigator.pop(context); // Volta para a lista de tarefas
+                                    },
+                                    child: const Text('Continuar'),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-                child: const Text('Aceitar e concluir tarefa'),
+                        );
+                      },
               ),
               const SizedBox(height: 12),
               SizedBox(

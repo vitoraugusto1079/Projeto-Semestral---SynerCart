@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../core/theme.dart';
@@ -19,14 +20,16 @@ class EmployeeProfileScreen extends StatelessWidget {
       body: ValueListenableBuilder<int>(
         valueListenable: MockDB.stateNotifier,
         builder: (context, _, _) {
-          final pendingTasks = MockDB.tasks.where((t) => !t.isResolved).toList();
-          final currentPendingTask = pendingTasks.isNotEmpty ? pendingTasks.first : null;
+          final acceptedTasks = MockDB.tasks.where((t) => t.isAccepted && !t.isResolved).toList();
+          final hasUnacceptedTasks = MockDB.tasks.any((t) => !t.isAccepted && !t.isResolved);
+          final profile = MockDB.employeeProfile;
+          final customAvatar = profile['customAvatarBytes'] as Uint8List?;
 
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                // Perfil Card
+                // Perfil Card (Clicável para Editar Perfil)
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -43,25 +46,41 @@ class EmployeeProfileScreen extends StatelessWidget {
                     child: Row(
                       children: [
                         ClipOval(
-                          child: SvgPicture.asset(
-                            'lib/assets/icons/avatar_employee.svg',
-                            width: 48,
-                            height: 48,
-                          ),
+                          child: customAvatar != null
+                              ? Image.memory(
+                                  customAvatar,
+                                  width: 48,
+                                  height: 48,
+                                  fit: BoxFit.cover,
+                                )
+                              : SvgPicture.asset(
+                                  'lib/assets/icons/avatar_employee.svg',
+                                  width: 48,
+                                  height: 48,
+                                ),
                         ),
                         const SizedBox(width: 16),
-                        const Expanded(
+                        Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                'João Silva',
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white),
+                              Row(
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      profile['name'] as String? ?? 'João Silva',
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  const Icon(Icons.edit_outlined, size: 14, color: AppTheme.textSecondary),
+                                ],
                               ),
-                              SizedBox(height: 2),
+                              const SizedBox(height: 2),
                               Text(
-                                'Repositor / Recolhedor - ID: 8849',
-                                style: TextStyle(color: AppTheme.textSecondary, fontSize: 12),
+                                '${profile['position'] ?? 'Repositor / Recolhedor'} - ID: ${profile['id'] ?? '8849'}',
+                                style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12),
                               ),
                             ],
                           ),
@@ -94,7 +113,7 @@ class EmployeeProfileScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Dados Card
                 Container(
                   padding: const EdgeInsets.all(16),
@@ -103,27 +122,27 @@ class EmployeeProfileScreen extends StatelessWidget {
                     color: AppTheme.surface,
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: const Column(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Email:', style: TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
-                      SizedBox(height: 4),
+                      const Text('Email:', style: TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
+                      const SizedBox(height: 4),
                       Text(
-                        'Silvajo@gmail.com',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white),
+                        profile['email'] as String? ?? 'Silvajo@gmail.com',
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white),
                       ),
-                      SizedBox(height: 12),
-                      Text('Senha:', style: TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 12),
+                      const Text('Senha:', style: TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
+                      const SizedBox(height: 4),
                       Text(
-                        '******',
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white, letterSpacing: 1.5),
+                        profile['password'] as String? ?? '******',
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white, letterSpacing: 1.5),
                       ),
                     ],
                   ),
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Dados de turno
                 Row(
                   children: [
@@ -180,98 +199,151 @@ class EmployeeProfileScreen extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 24),
-                
-                const Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text('Tarefas Pendentes', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Tarefas Pendentes', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                    if (acceptedTasks.isNotEmpty)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: AppTheme.primary.withValues(alpha: 0.16),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          '${acceptedTasks.length} ${acceptedTasks.length == 1 ? "aceita" : "aceitas"}',
+                          style: const TextStyle(color: AppTheme.primary, fontSize: 11, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                  ],
                 ),
                 const SizedBox(height: 12),
-                
-                // Tarefa Pendente Dinâmica
-                if (currentPendingTask != null)
+
+                // Lista de Tarefas Aceitas no Perfil do Funcionário
+                if (acceptedTasks.isNotEmpty)
+                  ...acceptedTasks.map((task) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: AppTheme.surface,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border(
+                            left: BorderSide(
+                              color: task.status == 'critical' ? AppTheme.error : AppTheme.warning,
+                              width: 4,
+                            ),
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              task.profileBannerTitle,
+                              style: TextStyle(
+                                color: task.status == 'critical' ? AppTheme.error : AppTheme.warning,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Reposição — ${task.title}',
+                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              task.profileDescription,
+                              style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12),
+                            ),
+                            const SizedBox(height: 16),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton.icon(
+                                icon: const Icon(Icons.check_circle_outline, size: 16),
+                                label: const Text('Concluir Tarefa', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppTheme.success,
+                                  foregroundColor: Colors.white,
+                                  elevation: 0,
+                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                ),
+                                onPressed: () {
+                                  final taskIdToResolve = task.id;
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      backgroundColor: AppTheme.surface,
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                                      contentPadding: const EdgeInsets.all(24),
+                                      content: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          const Icon(Icons.check_circle, color: AppTheme.success, size: 60),
+                                          const SizedBox(height: 16),
+                                          const Text(
+                                            'Missão Cumprida!',
+                                            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          const Text(
+                                            'Essa tarefa foi concluída com sucesso e o status da estação foi atualizado.',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(color: AppTheme.textSecondary, fontSize: 14),
+                                          ),
+                                          const SizedBox(height: 24),
+                                          SizedBox(
+                                            width: double.infinity,
+                                            child: ElevatedButton(
+                                              style: ElevatedButton.styleFrom(backgroundColor: AppTheme.success),
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                                MockDB.resolveTask(taskIdToResolve);
+                                              },
+                                              child: const Text('Continuar'),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  })
+                else if (hasUnacceptedTasks)
                   Container(
+                    width: double.infinity,
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: AppTheme.surface,
                       borderRadius: BorderRadius.circular(12),
-                      border: Border(
-                        left: BorderSide(
-                          color: currentPendingTask.status == 'critical' ? AppTheme.error : AppTheme.warning,
-                          width: 4,
-                        ),
-                      ),
+                      border: const Border(left: BorderSide(color: AppTheme.primary, width: 4)),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    child: const Row(
                       children: [
-                        Text(
-                          currentPendingTask.profileBannerTitle,
-                          style: TextStyle(
-                            color: currentPendingTask.status == 'critical' ? AppTheme.error : AppTheme.warning,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Reposição — ${currentPendingTask.title}',
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          currentPendingTask.profileDescription,
-                          style: const TextStyle(color: AppTheme.textSecondary, fontSize: 12),
-                        ),
-                        const SizedBox(height: 16),
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppTheme.background,
-                              foregroundColor: AppTheme.textPrimary,
-                              elevation: 0,
-                            ),
-                            onPressed: () {
-                              final taskIdToResolve = currentPendingTask.id;
-                              showDialog(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  backgroundColor: AppTheme.surface,
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                                  contentPadding: const EdgeInsets.all(24),
-                                  content: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Icon(Icons.check_circle, color: AppTheme.success, size: 60),
-                                      const SizedBox(height: 16),
-                                      const Text(
-                                        'Missão Cumprida!',
-                                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      const Text(
-                                        'Essa tarefa foi encerrada e o status da estação foi atualizado.',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(color: AppTheme.textSecondary, fontSize: 14),
-                                      ),
-                                      const SizedBox(height: 24),
-                                      SizedBox(
-                                        width: double.infinity,
-                                        child: ElevatedButton(
-                                          style: ElevatedButton.styleFrom(backgroundColor: AppTheme.success),
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                            MockDB.resolveTask(taskIdToResolve);
-                                          },
-                                          child: const Text('Continuar'),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                            child: const Text('Encerrar Tarefa', style: TextStyle(fontSize: 12)),
+                        Icon(Icons.assignment_outlined, color: AppTheme.primary, size: 24),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Nenhuma tarefa aceita no momento',
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.white),
+                              ),
+                              SizedBox(height: 2),
+                              Text(
+                                'Vá até a aba Tarefas e clique em "Saiba mais" para aceitar uma tarefa e concluí-la por aqui.',
+                                style: TextStyle(color: AppTheme.textSecondary, fontSize: 12),
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -309,7 +381,7 @@ class EmployeeProfileScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                
+
                 const SizedBox(height: 24),
                 // Logout
                 GestureDetector(
