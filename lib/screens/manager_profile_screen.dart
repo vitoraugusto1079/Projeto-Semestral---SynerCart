@@ -127,22 +127,37 @@ class _ManagerProfileScreenState extends State<ManagerProfileScreen> {
                   decoration: BoxDecoration(
                     color: AppTheme.surface,
                     borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Email:', style: TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
-                      const SizedBox(height: 4),
-                      Text(
-                        profile['email'] as String? ?? 'Carvalho@gmail.com',
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white),
+                      Row(
+                        children: [
+                          const Icon(Icons.alternate_email_rounded, size: 15, color: AppTheme.textSecondary),
+                          const SizedBox(width: 8),
+                          const Text('E-mail Corporativo:', style: TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
+                          const Spacer(),
+                          Text(
+                            profile['email'] as String? ?? 'Carvalho@gmail.com',
+                            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Colors.white),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 12),
-                      const Text('Senha:', style: TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
-                      const SizedBox(height: 4),
-                      Text(
-                        profile['password'] as String? ?? '654321',
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.white, letterSpacing: 0.8),
+                      Divider(color: Colors.white.withValues(alpha: 0.06), height: 1),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          const Icon(Icons.schedule_rounded, size: 15, color: AppTheme.textSecondary),
+                          const SizedBox(width: 8),
+                          const Text('Escala / Turno:', style: TextStyle(color: AppTheme.textSecondary, fontSize: 12)),
+                          const Spacer(),
+                          Text(
+                            profile['shift'] as String? ?? 'Turno Integral / Comercial',
+                            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Colors.white),
+                          ),
+                        ],
                       ),
                     ],
                   ),

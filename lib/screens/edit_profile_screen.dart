@@ -18,10 +18,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   late final TextEditingController _nameController;
   late final TextEditingController _emailController;
   late final TextEditingController _phoneController;
-  late final TextEditingController _passwordController;
   late String _selectedShift;
   Uint8List? _customAvatarBytes;
-  bool _obscurePassword = true;
 
   static const List<String> _shifts = [
     'Turno Manhã (06h às 14h20)',
@@ -41,7 +39,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _nameController = TextEditingController(text: data['name'] as String? ?? '');
     _emailController = TextEditingController(text: data['email'] as String? ?? '');
     _phoneController = TextEditingController(text: data['phone'] as String? ?? '');
-    _passwordController = TextEditingController(text: data['password'] as String? ?? '');
     final currentShift = data['shift'] as String? ?? _shifts.first;
     _selectedShift = _shifts.contains(currentShift) ? currentShift : _shifts.first;
     _customAvatarBytes = data['customAvatarBytes'] as Uint8List?;
@@ -52,7 +49,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _nameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
-    _passwordController.dispose();
     super.dispose();
   }
 
@@ -72,7 +68,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       email: _emailController.text,
       phone: _phoneController.text,
       shift: _selectedShift,
-      password: _passwordController.text,
+      password: _profileData['password'] as String? ?? '',
       avatarBytes: _customAvatarBytes,
     );
 
@@ -93,7 +89,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'As informações de ${_nameController.text.trim()} foram salvas e sincronizadas com sucesso.',
+              'As informações de ${_nameController.text.trim()} foram salvas com sucesso.',
               textAlign: TextAlign.center,
               style: const TextStyle(color: AppTheme.textSecondary, fontSize: 14),
             ),
@@ -143,19 +139,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             // ==========================================
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
+              padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 20),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    AppTheme.primary.withValues(alpha: 0.18),
-                    AppTheme.surface,
-                    AppTheme.surface,
-                  ],
-                ),
-                borderRadius: BorderRadius.circular(18),
-                border: Border.all(color: AppTheme.primary.withValues(alpha: 0.28)),
+                color: AppTheme.surface,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.07)),
               ),
               child: Column(
                 children: [
@@ -165,33 +153,26 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       alignment: Alignment.center,
                       children: [
                         Container(
-                          padding: const EdgeInsets.all(4),
+                          padding: const EdgeInsets.all(3),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: AppTheme.primary.withValues(alpha: 0.65),
-                              width: 2.5,
+                              color: AppTheme.primary.withValues(alpha: 0.6),
+                              width: 2,
                             ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppTheme.primary.withValues(alpha: 0.22),
-                                blurRadius: 16,
-                                spreadRadius: 2,
-                              ),
-                            ],
                           ),
                           child: ClipOval(
                             child: _customAvatarBytes != null
                                 ? Image.memory(
                                     _customAvatarBytes!,
-                                    width: 88,
-                                    height: 88,
+                                    width: 84,
+                                    height: 84,
                                     fit: BoxFit.cover,
                                   )
                                 : SvgPicture.asset(
                                     avatarAsset,
-                                    width: 88,
-                                    height: 88,
+                                    width: 84,
+                                    height: 84,
                                   ),
                           ),
                         ),
@@ -199,36 +180,35 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           bottom: 0,
                           right: 0,
                           child: Container(
-                            padding: const EdgeInsets.all(8),
+                            padding: const EdgeInsets.all(7),
                             decoration: BoxDecoration(
                               color: AppTheme.primary,
                               shape: BoxShape.circle,
-                              border: Border.all(color: AppTheme.surface, width: 2.5),
+                              border: Border.all(color: AppTheme.surface, width: 2),
                             ),
-                            child: const Icon(Icons.camera_alt_rounded, size: 16, color: Colors.white),
+                            child: const Icon(Icons.camera_alt_rounded, size: 15, color: Colors.white),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 12),
                   Text(
                     _nameController.text.trim().isEmpty
                         ? (_isManager ? 'Aline Carvalho' : 'João Silva')
                         : _nameController.text.trim(),
                     style: const TextStyle(
-                      fontSize: 18,
+                      fontSize: 17,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
                   ),
                   const SizedBox(height: 6),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: AppTheme.primary.withValues(alpha: 0.14),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: AppTheme.primary.withValues(alpha: 0.35)),
+                      color: AppTheme.primary.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(16),
                     ),
                     child: Text(
                       roleBadgeText,
@@ -236,18 +216,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         color: AppTheme.primary,
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  GestureDetector(
-                    onTap: _pickAvatar,
-                    child: const Text(
-                      'Toque na foto para alterar a imagem de perfil',
-                      style: TextStyle(
-                        color: AppTheme.textSecondary,
-                        fontSize: 11,
+                        letterSpacing: 0.4,
                       ),
                     ),
                   ),
@@ -273,10 +242,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   _buildSectionHeader(
                     icon: Icons.badge_outlined,
                     title: 'Dados Pessoais e Contato',
-                    subtitle: 'Informações exibidas na sua identificação do turno',
                   ),
-                  const SizedBox(height: 16),
-                  Divider(color: Colors.white.withValues(alpha: 0.08), height: 1),
+                  const SizedBox(height: 14),
+                  Divider(color: Colors.white.withValues(alpha: 0.07), height: 1),
                   const SizedBox(height: 16),
 
                   _buildFieldLabel('Nome Completo'),
@@ -288,12 +256,56 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  _buildFieldLabel('E-mail Corporativo'),
-                  _buildStyledTextField(
-                    controller: _emailController,
-                    hint: _isManager ? 'carvalho@gmail.com' : 'silvajo@gmail.com',
-                    prefixIcon: Icons.alternate_email_rounded,
-                    keyboardType: TextInputType.emailAddress,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _buildFieldLabel('E-mail Corporativo'),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Text(
+                          'Não editável',
+                          style: TextStyle(
+                            color: AppTheme.textSecondary.withValues(alpha: 0.45),
+                            fontSize: 10,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  // Campo de E-mail escurecido e bloqueado para indicar que não pode ser alterado
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF080B0F),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: Colors.white.withValues(alpha: 0.04)),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.alternate_email_rounded,
+                          size: 18,
+                          color: AppTheme.textSecondary.withValues(alpha: 0.35),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            _emailController.text,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: AppTheme.textSecondary.withValues(alpha: 0.45),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                        Icon(
+                          Icons.lock_outline_rounded,
+                          size: 15,
+                          color: AppTheme.textSecondary.withValues(alpha: 0.35),
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 16),
 
@@ -326,97 +338,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   _buildSectionHeader(
                     icon: Icons.storefront_outlined,
                     title: 'Vínculo Operacional',
-                    subtitle: 'Unidade e escala de trabalho atual',
                   ),
-                  const SizedBox(height: 16),
-                  Divider(color: Colors.white.withValues(alpha: 0.08), height: 1),
-                  const SizedBox(height: 16),
-
-                  IntrinsicHeight(
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: AppTheme.background,
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
-                            ),
-                            child: const Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(Icons.store_outlined, size: 13, color: AppTheme.primary),
-                                    SizedBox(width: 5),
-                                    Text(
-                                      'Unidade',
-                                      style: TextStyle(fontSize: 10, color: AppTheme.textSecondary),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 6),
-                                Text(
-                                  'Unidade 07',
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppTheme.textPrimary,
-                                  ),
-                                ),
-                                SizedBox(height: 2),
-                                Text(
-                                  'Supermercado Central',
-                                  style: TextStyle(fontSize: 10, color: AppTheme.textSecondary),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: AppTheme.background,
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Row(
-                                  children: [
-                                    Icon(Icons.work_outline_rounded, size: 13, color: AppTheme.success),
-                                    SizedBox(width: 5),
-                                    Text(
-                                      'Função no Sistema',
-                                      style: TextStyle(fontSize: 10, color: AppTheme.textSecondary),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  _isManager ? 'Gerente Geral' : 'Repositor',
-                                  style: const TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.bold,
-                                    color: AppTheme.textPrimary,
-                                  ),
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  _isManager ? 'Gestão de Frota' : 'Recolha e Reposição',
-                                  style: const TextStyle(fontSize: 10, color: AppTheme.textSecondary),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  const SizedBox(height: 14),
+                  Divider(color: Colors.white.withValues(alpha: 0.07), height: 1),
                   const SizedBox(height: 16),
 
                   _buildFieldLabel('Escala / Turno de Atuação'),
@@ -459,77 +383,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 16),
-
-            // ==========================================
-            // CARD 4: SEGURANÇA E SENHA
-            // ==========================================
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: AppTheme.surface,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.white.withValues(alpha: 0.06)),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildSectionHeader(
-                    icon: Icons.lock_outline_rounded,
-                    title: 'Segurança e Acesso',
-                    subtitle: 'Altere sua credencial de entrada no aplicativo',
-                  ),
-                  const SizedBox(height: 16),
-                  Divider(color: Colors.white.withValues(alpha: 0.08), height: 1),
-                  const SizedBox(height: 16),
-
-                  _buildFieldLabel('Senha de Acesso'),
-                  TextField(
-                    controller: _passwordController,
-                    obscureText: _obscurePassword,
-                    style: const TextStyle(fontSize: 14, color: AppTheme.textPrimary),
-                    decoration: InputDecoration(
-                      hintText: 'Digite sua senha',
-                      prefixIcon: const Icon(Icons.key_rounded, size: 18, color: AppTheme.primary),
-                      suffixIcon: IconButton(
-                        tooltip: _obscurePassword ? 'Mostrar senha' : 'Ocultar senha',
-                        icon: Icon(
-                          _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-                          size: 18,
-                          color: AppTheme.textSecondary,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _obscurePassword = !_obscurePassword;
-                          });
-                        },
-                      ),
-                      filled: true,
-                      fillColor: AppTheme.background,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.12)),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                        borderSide: const BorderSide(color: AppTheme.primary, width: 1.5),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
             const SizedBox(height: 24),
 
             // ==========================================
             // BOTÕES DE AÇÃO
             // ==========================================
-            ElevatedButton.icon(
+            ElevatedButton(
               onPressed: _saveProfile,
-              icon: const Icon(Icons.check_circle_outline_rounded, size: 18),
-              label: const Text('Salvar Alterações'),
+              child: const Text('Salvar Alterações'),
             ),
             const SizedBox(height: 12),
             SizedBox(
@@ -537,7 +398,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               child: OutlinedButton(
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppTheme.textPrimary,
-                  side: BorderSide(color: Colors.white.withValues(alpha: 0.18)),
+                  side: BorderSide(color: Colors.white.withValues(alpha: 0.16)),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   padding: const EdgeInsets.symmetric(vertical: 15),
                   backgroundColor: AppTheme.surface,
@@ -556,40 +417,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget _buildSectionHeader({
     required IconData icon,
     required String title,
-    required String subtitle,
   }) {
     return Row(
       children: [
-        Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: AppTheme.primary.withValues(alpha: 0.14),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Icon(icon, size: 18, color: AppTheme.primary),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.textPrimary,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                subtitle,
-                style: const TextStyle(
-                  fontSize: 11,
-                  color: AppTheme.textSecondary,
-                ),
-              ),
-            ],
+        Icon(icon, size: 18, color: AppTheme.primary),
+        const SizedBox(width: 8),
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: AppTheme.textPrimary,
           ),
         ),
       ],
