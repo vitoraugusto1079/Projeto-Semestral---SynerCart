@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/theme.dart';
 import '../core/mock_db.dart';
+import '../widgets/wokwi_iot_panel.dart';
 
 class ManagerDashboard extends StatefulWidget {
   const ManagerDashboard({super.key});
@@ -266,6 +267,10 @@ class _ManagerDashboardState extends State<ManagerDashboard> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            // Banner de Telemetria IoT Wokwi & MQTT
+            const WokwiIotBanner(),
+            const SizedBox(height: 16),
+
             // Card Gráfico (Uso por Horário)
             Container(
               padding: const EdgeInsets.all(16),

@@ -79,19 +79,19 @@ class DefectTypeModel {
 class TaskItemModel {
   final String id;
   final String title;
-  final String subtitle;
+  String subtitle;
   final String resolvedSubtitle;
   String timeText;
   String status; // 'critical', 'warning', 'resolved'
   bool isAccepted;
   final String fromLocation;
   final String toLocation;
-  final String quantityText;
+  String quantityText;
   final String priorityText;
   final String corridorLabel;
   final String estimatedTime;
   final String profileBannerTitle;
-  final String profileDescription;
+  String profileDescription;
 
   TaskItemModel({
     required this.id,
