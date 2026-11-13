@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/foundation.dart';
-import 'package:mqtt_client/mqtt_client.dart';
 import 'mock_db.dart';
 import 'mqtt_connector_io.dart' if (dart.library.js_interop) 'mqtt_connector_web.dart';
 
@@ -47,9 +46,9 @@ class WokwiMqttService {
   static const String topicoEquipamentos = '$baseTopic/equipamentos';
   static const String topicoAck = '$baseTopic/ack';
 
-  static MqttClient? _client;
-  static StreamSubscription<List<MqttReceivedMessage<MqttMessage>>>? _subscription;
+  static SynerMqttTransport? _transport;
   static bool _isConnecting = false;
+  static Timer? _reconnectTimer;
 
   // Estado da conexão MQTT
   static bool isConnected = false;
@@ -93,88 +92,70 @@ class WokwiMqttService {
     MockDB.stateNotifier.value++;
 
     try {
-      _subscription?.cancel();
-      _client?.disconnect();
+      _transport?.disconnect();
 
       final randomSuffix = Random().nextInt(900000) + 100000;
       final clientId = 'synercart-app-$randomSuffix';
 
-      final client = createMqttClient(clientId);
-      _client = client;
+      final transport = createSynerMqttTransport();
+      _transport = transport;
 
-      client.onConnected = () {
+      transport.onConnected = () {
         isConnected = true;
         connectionStatusText = 'MQTT Conectado (HiveMQ)';
         MockDB.stateNotifier.value++;
       };
 
-      client.onDisconnected = () {
+      transport.onDisconnected = () {
         isConnected = false;
-        connectionStatusText = 'MQTT Desconectado';
-        MockDB.stateNotifier.value++;
-      };
-
-      client.onAutoReconnect = () {
         connectionStatusText = 'Reconectando MQTT...';
         MockDB.stateNotifier.value++;
+        _scheduleReconnect();
       };
 
-      client.onAutoReconnected = () {
+      transport.onMessage = _handleMessage;
+
+      final ok = await transport.connect(clientId);
+
+      if (ok) {
         isConnected = true;
         connectionStatusText = 'MQTT Conectado (HiveMQ)';
         _subscribeTopics();
-        MockDB.stateNotifier.value++;
-      };
-
-      final connMess = MqttConnectMessage()
-          .withClientIdentifier(clientId)
-          .startClean()
-          .withWillQos(MqttQos.atLeastOnce);
-      client.connectionMessage = connMess;
-
-      await client.connect();
-
-      if (client.connectionStatus?.state == MqttConnectionState.connected) {
-        isConnected = true;
-        connectionStatusText = 'MQTT Conectado (HiveMQ)';
-        _subscribeTopics();
-        // Solicita leitura atual ao ESP32 caso ele esteja online
         sendCommand({'acao': 'consultar'});
       } else {
         isConnected = false;
-        connectionStatusText = 'Falha ao conectar ao Broker';
+        connectionStatusText = 'Reconectando ao Broker...';
+        _scheduleReconnect();
       }
     } catch (e) {
       isConnected = false;
-      connectionStatusText = 'Offline (Aguardando Broker)';
+      connectionStatusText = 'Reconectando ao Broker...';
       if (kDebugMode) {
         print('Erro MQTT: $e');
       }
+      _scheduleReconnect();
     } finally {
       _isConnecting = false;
       MockDB.stateNotifier.value++;
     }
   }
 
-  static void _subscribeTopics() {
-    final client = _client;
-    if (client == null || client.connectionStatus?.state != MqttConnectionState.connected) {
-      return;
-    }
-
-    client.subscribe(topicoEstacao, MqttQos.atMostOnce);
-    client.subscribe(topicoEquipamentos, MqttQos.atMostOnce);
-    client.subscribe(topicoAck, MqttQos.atMostOnce);
-
-    _subscription?.cancel();
-    _subscription = client.updates?.listen((List<MqttReceivedMessage<MqttMessage>> messages) {
-      for (final msg in messages) {
-        final recMess = msg.payload as MqttPublishMessage;
-        final payloadBytes = recMess.payload.message;
-        final payloadString = utf8.decode(payloadBytes, allowMalformed: true);
-        _handleMessage(msg.topic, payloadString);
+  static void _scheduleReconnect() {
+    _reconnectTimer?.cancel();
+    _reconnectTimer = Timer(const Duration(seconds: 5), () {
+      if (!isConnected && !_isConnecting) {
+        connect();
       }
     });
+  }
+
+  static void _subscribeTopics() {
+    final transport = _transport;
+    if (transport == null || !isConnected) return;
+
+    transport.subscribe(topicoEstacao);
+    transport.subscribe(topicoEquipamentos);
+    transport.subscribe(topicoAck);
   }
 
   static void _handleMessage(String topic, String payloadString) {
@@ -233,7 +214,7 @@ class WokwiMqttService {
         final origemLabel = origem == 'hc_sr04'
             ? 'Sensor HC-SR04 (${distanciaCm?.toStringAsFixed(0) ?? "--"} cm)'
             : 'MQTT Simulado';
-        station['sector'] = 'IoT Wokwi • $quantidade/$capacidade carrinhos • $origemLabel';
+        station['sector'] = 'Acesso ao Supermercado • $quantidade/$capacidade carrinhos ($origemLabel)';
 
         // Atualiza a tarefa da Estação 1 - Entrada conforme leitura do sensor
         final taskIdx = MockDB.tasks.indexWhere((t) => t.id == 'task_1');
@@ -243,13 +224,13 @@ class WokwiMqttService {
             final faltam = (capacidade - quantidade!).clamp(1, capacidade);
             task.status = 'critical';
             task.timeText = 'Sensor agora';
-            task.subtitle = 'Sensor Ultrassônico: $quantidade/$capacidade carrinhos na baia';
+            task.subtitle = 'Carrinhos: $quantidade/$capacidade disponíveis';
             task.quantityText = 'Quantidade Necessária: $faltam Carrinhos';
             task.profileDescription =
-                'Sensor Wokwi detectou baia quase vazia ($quantidade/$capacidade). Repor $faltam carrinhos na Estação 1 - Entrada.';
+                'Retirar $faltam carrinhos da Estação 2 - Saída para suprir a Estação 1 - Entrada ($quantidade/$capacidade no sensor).';
           } else if (statusRaw == 'atencao' && !task.isResolved) {
             task.status = 'warning';
-            task.subtitle = 'Sensor Ultrassônico: $quantidade/$capacidade carrinhos (Atenção)';
+            task.subtitle = 'Carrinhos: $quantidade/$capacidade disponíveis';
           }
         }
       }
@@ -281,8 +262,8 @@ class WokwiMqttService {
   }
 
   static void sendCommand(Map<String, dynamic> payload) {
-    final client = _client;
-    if (client == null || client.connectionStatus?.state != MqttConnectionState.connected) {
+    final transport = _transport;
+    if (transport == null || !isConnected) {
       lastAckOk = false;
       lastAckMessage = 'Conecte-se ao Broker MQTT primeiro';
       MockDB.stateNotifier.value++;
@@ -292,8 +273,6 @@ class WokwiMqttService {
     final mapWithId = Map<String, dynamic>.from(payload);
     mapWithId['request_id'] ??= 'req_${DateTime.now().millisecondsSinceEpoch}';
 
-    final builder = MqttClientPayloadBuilder();
-    builder.addUTF8String(jsonEncode(mapWithId));
-    client.publishMessage(topicoComando, MqttQos.atMostOnce, builder.payload!);
+    transport.publish(topicoComando, jsonEncode(mapWithId));
   }
 }

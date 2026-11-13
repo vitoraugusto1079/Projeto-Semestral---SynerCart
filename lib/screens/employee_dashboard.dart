@@ -2,11 +2,21 @@ import 'package:flutter/material.dart';
 import '../core/theme.dart';
 import '../core/mock_db.dart';
 import '../core/wokwi_mqtt_service.dart';
-import '../widgets/wokwi_iot_panel.dart';
 import 'equipment_list_screen.dart';
 
-class EmployeeDashboard extends StatelessWidget {
+class EmployeeDashboard extends StatefulWidget {
   const EmployeeDashboard({super.key});
+
+  @override
+  State<EmployeeDashboard> createState() => _EmployeeDashboardState();
+}
+
+class _EmployeeDashboardState extends State<EmployeeDashboard> {
+  @override
+  void initState() {
+    super.initState();
+    WokwiMqttService.ensureConnected();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,11 +95,7 @@ class EmployeeDashboard extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 14),
-
-                // Painel ao vivo do Gateway IoT Wokwi (ESP32 + Sensor Ultrassônico HC-SR04 + MQTT HiveMQ)
-                const WokwiIotBanner(),
-                const SizedBox(height: 18),
+                const SizedBox(height: 20),
 
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
